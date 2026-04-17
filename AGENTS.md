@@ -13,16 +13,9 @@
 - **Data Flow**: `data/raw/*.txt` → `preprocess.m` → `data/processed/data.mat` (exports `words`, `labels`).
 - **Gotcha**: `preprocess.m` has hardcoded input paths (`lalka.txt`, `chlopi.txt`). Edit the `books` cell array to change sources.
 
-## Vehicles Counter (`vehicles-counter/`)
-- **Requirements**: Octave, VLC (for live stream). Standalone project with its own git VCS.
-- **Config**: `conf/settings.m` — edit `hidden_layer_size`, `lambda`, `iterations`, `resize_scale`, `datasource_path_prefix` before running.
-- **Core scripts** (run from `vehicles-counter/`):
-  - `learn.m` — trains NN. Reads `datasource/train/{cars,notcars}/`. Saves `Theta1.mat`, `Theta2.mat`.
-  - `check.m` — evals on `datasource/test/{cars,notcars}/`. Must have pre-trained `Theta1.mat`/`Theta2.mat`.
-  - `detect.m` — live vehicle count via VLC stream.
-- **Optimizer**: `lib/fmincg.m` (conjugate gradients, from Carl Edward Rasmussen). Not Octave built-in — must stay in `lib/`.
-- **Windows `.bat` files** in `bin/` — require porting to sh on macOS/Linux.
-- **Gotcha**: `learn.m` and `check.m` must be run in the Octave working directory matching `conf/settings.m` paths (relative). Running from elsewhere breaks data source resolution.
+## Vehicles Counter
+- `vehicles-counter/` is a separate project temporarily stored here for convenience. It will be removed soon.
+
 
 ## Learning Plan
 - `plan-nauki.md` — 5-stage curriculum (ngram baseline → MLP with hand-written backprop → bi-LSTM → transformer → deploy) for the Polish Punctuation Restorer project. Contains architecture, hyperparams, mathematical derivations needed, and trap avoidance.
