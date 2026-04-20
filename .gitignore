@@ -1,6 +1,9 @@
 # vehicles-counter is a separate project, already under its own VCS
 vehicles-counter/
 
+# Polish learning notes (internal, not part of the public repo)
+plan-nauki.md
+
 # OS, editor, build artifacts
 .DS_Store
 .vscode/
