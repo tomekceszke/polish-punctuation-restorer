@@ -1,0 +1,41 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Octave
+        run: sudo apt-get install -y octave
+
+      - name: Smoke test — labelize
+        run: |
+          octave --norc --no-gui --eval "
+            addpath('src/lib');
+            [words, labels] = labelize({'hello', 'world,', 'test.'});
+            assert(isequal(words, {'hello', 'world', 'test'}));
+            assert(isequal(labels, [0, 1, 2]));
+            disp('labelize: OK');
+          "
+
+      - name: Smoke test — tokenize (writes temp file)
+        run: |
+          octave --norc --no-gui --eval "
+            addpath('src/lib');
+            tmp = tempname();
+            fid = fopen(tmp, 'w');
+            fprintf(fid, 'Ala ma kota, a kot ma Alę.\n');
+            fclose(fid);
+            tokens = tokenize(tmp);
+            assert(length(tokens) > 0);
+            delete(tmp);
+            disp('tokenize: OK');
+          "
