@@ -1,3 +1,6 @@
+%% Polish Punctuation Restorer
+%% Author: Tomasz Ceszke 2026
+
 function tokens = tokenize(path)
     fid = fopen(path, 'r');
     if fid == -1

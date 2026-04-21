@@ -1,4 +1,6 @@
 %% Polish Punctuation Restorer
 %% Author: Tomasz Ceszke 2026
 
-C_CUT_OFF_WORDS = 1000;
+function p = count(word, word1, label)
+
+end

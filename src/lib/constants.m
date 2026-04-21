@@ -1,4 +1,7 @@
 %% Polish Punctuation Restorer
 %% Author: Tomasz Ceszke 2026
 
-C_CUT_OFF_WORDS = 1000;
+NONE = 0;
+COMMA = 1;
+PERIOD = 2;
+

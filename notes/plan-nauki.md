@@ -67,8 +67,9 @@ polish-punctuation-restorer/
    - wczytaj plik, lowercase, usuń wszystko poza `[a-ząćęłńóśźż\s,.]`
    - iteruj po tokenach, buduj listę `(word, label)` gdzie label = znak występujący bezpośrednio po słowie (lub NONE)
    - zapisz jako `.mat` (macierze łatwiejsze w Octave niż struktury)
-3. `baseline_ngram.m`: dla każdej pary `(w_i, w_{i+1})` licz `count[label | w_i, w_{i+1}]`. Predykcja = argmax z wygładzaniem Laplace'a. *To odpowiednik "zgadnij medianę ceny w otomoto" z `car-price-prediction` — baseline bez modelu, do porównania.*
-4. Oceń na walidacji: **raportuj F1 per klasa**, nie accuracy.
+3. `vocab.m`: policz częstość każdego słowa w zbiorze treningowym, wybierz top-N (N=1000 na start), przypisz indeksy 1..N, nieznane słowa → indeks N+1 (`<UNK>`). Zamień `words` (cell array stringów) na `word_indices` (wektor liczb całkowitych). Zapisz słownik do `vocab.mat`. Bez tego kroku pętla n-gram musi operować na stringach (`containers.Map`), co jest ~100× wolniejsze niż indeksowanie macierzy numerycznej.
+4. `baseline_ngram.m`: dla każdej pary `(word_indices(i), word_indices(i+1))` licz `count[label | idx1, idx2]` w macierzy numerycznej `zeros(N+1, N+1, 3)`. Predykcja = argmax z wygładzaniem Laplace'a. *To odpowiednik "zgadnij medianę ceny w otomoto" z `car-price-prediction` — baseline bez modelu, do porównania.*
+5. Oceń na walidacji: **raportuj F1 per klasa**, nie accuracy.
 
 **Czego się nauczysz:** pracy z korpusem, pułapek preprocessingu PL, świadomości dysproporcji klas (spodziewaj się ~85% NONE), różnicy accuracy vs F1.
 
