@@ -1,5 +1,7 @@
 # Stage 0, Step 3 — Bigram Baseline Predictor
 
+See also: [learning-plan.md](learning-plan.md)
+
 ## Goal
 
 Build the simplest possible punctuation predictor using only corpus statistics — no weights, no neural network, no learning. This is the **floor**: every subsequent model must beat it.
@@ -31,11 +33,13 @@ Each position produces one training example. The label always belongs to `w_i` (
 
 ## Input / Output
 
-**Input (training):** list of triples `(w_i, w_{i+1}, label)` from the training corpus.
+**Input (training):** list of triples `(idx_i, idx_{i+1}, label)` from the training corpus, where `idx_i` and `idx_{i+1}` are numeric indices from `vocab.mat`, not raw strings.
 
-**Input (prediction):** a pair of consecutive words `(w_i, w_{i+1})`.
+**Input (prediction):** a pair of consecutive word indices `(idx_i, idx_{i+1})`.
 
 **Output (prediction):** one label — `NONE=0`, `COMMA=1`, `PERIOD=2`.
+
+> **Prerequisite:** run `vocab.m` before `baseline_ngram.m`. `vocab.m` converts the `words` cell array (strings) from `data.mat` into a `word_indices` integer vector. The n-gram counter operates on numeric indices, not strings — this allows using a plain 3D numeric matrix `zeros(N+1, N+1, 3)` instead of `containers.Map`, which is ~100× slower in Octave.
 
 ---
 
