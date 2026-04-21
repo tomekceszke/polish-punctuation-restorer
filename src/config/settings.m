@@ -1,0 +1,1 @@
+C_CUT_OFF_WORDS = 50;
