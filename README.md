@@ -36,8 +36,15 @@ For reference: GPT-2 small has 117M parameters — roughly 400× more.
 
 ### Current task
 
-**Stage 0, Step 3** — implement `baseline_ngram.m`:
-- For each word pair `(w_i, w_{i+1})` count `count[label | w_i, w_{i+1}]`
+**Stage 0, Step 3** — implement `vocab.m`:
+- Count word frequency in the training split
+- Select top-N words (N=1000 to start), assign numeric indices 1..N
+- Map unknown words to index N+1 (`<UNK>`)
+- Convert `words` cell array to `word_indices` integer vector
+- Save to `vocab.mat`
+
+Then proceed to **Step 4** — implement `baseline_ngram.m`:
+- For each pair `(word_indices(i), word_indices(i+1))` count `count[label | idx1, idx2]` in `zeros(N+1, N+1, 3)`
 - Prediction = argmax with Laplace smoothing
 - Evaluate on test set, report Precision / Recall / F1 per class + Macro-F1
 - Save results to `notes/stage-0-results.md`
@@ -87,6 +94,8 @@ Planned additions (per learning plan):
 
 ```
 src/
+├── config/
+│   └── settings.m           # Shared constants (e.g. C_CUT_OFF_WORDS)
 ├── vocab.m                  # Build top-V vocabulary + <UNK> + <PAD>
 ├── baseline_ngram.m         # Stage 0: n-gram frequency baseline
 ├── mlp_forward.m            # Stage 1: forward pass
