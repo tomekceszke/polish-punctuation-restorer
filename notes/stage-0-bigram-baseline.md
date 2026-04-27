@@ -33,13 +33,11 @@ Each position produces one training example. The label always belongs to `w_i` (
 
 ## Input / Output
 
-**Input (training):** list of triples `(idx_i, idx_{i+1}, label)` from the training corpus, where `idx_i` and `idx_{i+1}` are numeric indices from `vocab.mat`, not raw strings.
+**Input (training):** list of triples `(idx_i, idx_{i+1}, label)` from the training corpus, where `idx_i` and `idx_{i+1}` are numeric word indices built by `build_vocab`, not raw strings.
 
 **Input (prediction):** a pair of consecutive word indices `(idx_i, idx_{i+1})`.
 
-**Output (prediction):** one label — `NONE=0`, `COMMA=1`, `PERIOD=2`.
-
-> **Prerequisite:** run `vocab.m` before `baseline_ngram.m`. `vocab.m` converts the `words` cell array (strings) from `data.mat` into a `word_indices` integer vector. The n-gram counter operates on numeric indices, not strings — this allows using a plain 3D numeric matrix `zeros(N+1, N+1, 3)` instead of `containers.Map`, which is ~100× slower in Octave.
+**Output (prediction):** one label — `NONE=1`, `COMMA=2`, `PERIOD=3`.
 
 ---
 
@@ -53,45 +51,24 @@ count("stał", "na", COMMA)  = 3
 count("stał", "na", PERIOD) = 1
 ```
 
-Prediction = label with the highest probability:
+Prediction = the label with the highest count. Check Octave's `max` function — it can return both the value and its index.
 
-```
-P(label | w_i, w_{i+1}) = count(w_i, w_{i+1}, label) / count(w_i, w_{i+1}, *)
-```
+No division needed — argmax over counts gives the same result as argmax over probabilities.
 
-Where `count(w_i, w_{i+1}, *)` = total occurrences of this bigram across all labels.
+For unseen bigrams (all counts = 0), default to NONE.
 
 ---
 
-## Problem: Unseen Bigrams
+## Extension: Laplace Smoothing *(optional, not needed for argmax)*
 
-Test data will contain bigrams never seen during training. Count = 0, denominator = 0 — undefined.
-
-### Laplace Smoothing (additive smoothing)
-
-Add 1 to every label counter before computing probability. Add K to the denominator (K = number of classes = 3):
+Relevant only if you need actual probability values (e.g. log-likelihood, model comparison). Adds 1 to every counter so no probability is ever zero:
 
 ```
 P(label | w_i, w_{i+1}) = (count(w_i, w_{i+1}, label) + 1)
                          / (count(w_i, w_{i+1}, *)     + K)
 ```
 
-For an unseen bigram:
-```
-P(NONE   | "nowe", "słowo") = (0 + 1) / (0 + 3) = 0.33
-P(COMMA  | "nowe", "słowo") = (0 + 1) / (0 + 3) = 0.33
-P(PERIOD | "nowe", "słowo") = (0 + 1) / (0 + 3) = 0.33
-```
-
-Equal probability for all classes — honest admission of ignorance.
-
-For a seen bigram, smoothing slightly pulls probabilities toward uniform:
-```
-Before: P(NONE | "stał", "na") = 45/49 = 0.918
-After:  P(NONE | "stał", "na") = 46/52 = 0.885   ← small change
-```
-
-The effect is small for frequent bigrams, large for rare ones.
+Where K = number of classes = 3. For argmax this changes nothing — adding the same constant to all terms does not change which is largest.
 
 ---
 

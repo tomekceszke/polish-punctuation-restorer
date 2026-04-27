@@ -28,7 +28,7 @@ Throughout this plan I deliberately refer to things you have already done — so
 | Parameter | Value | Rationale |
 |-----------|-------|-----------|
 | Task | Token classification | For each word we predict the label of the punctuation that follows it |
-| Labels | `{NONE=0, COMMA=1, PERIOD=2}` | Minimal meaningful set |
+| Labels | `{NONE=1, COMMA=2, PERIOD=3}` | Minimal meaningful set; 1-based to match Octave indexing |
 | Corpus | Wolne Lektury (PL) | Clean literary text, free to use, sufficient for a prototype |
 | Stack | GNU Octave | `brew install octave`, MATLAB-like syntax |
 | Representation | Embeddings over top-N words + `<UNK>` | Lookup = row indexing into a matrix |
@@ -49,7 +49,6 @@ polish-punctuation-restorer/
 │   └── processed/           # tokens + labels (CSV/MAT)
 ├── src/
 │   ├── preprocess.m         # raw text → (tokens, labels)
-│   ├── vocab.m              # build top-N vocabulary
 │   ├── baseline_ngram.m     # Stage 0
 │   ├── mlp_forward.m        # Stage 1: forward pass
 │   ├── mlp_backward.m       # Stage 1: gradients by hand
@@ -59,7 +58,6 @@ polish-punctuation-restorer/
 │   └── evaluate.m           # precision/recall/F1 per class
 ├── Theta1.mat, Theta2.mat   # saved weights — 1:1 convention from vehicles-counter
 ├── E.mat                    # embedding matrix (new vs vehicles-counter)
-├── vocab.mat                # word↔index dictionary (new)
 ├── notes/                   # math derivations
 └── README.md
 ```
@@ -75,8 +73,7 @@ polish-punctuation-restorer/
    - read file, lowercase, remove everything except `[a-ząćęłńóśźż\s,.]`
    - iterate over tokens, build list of `(word, label)` where label = punctuation immediately after the word (or NONE)
    - save as `.mat` (matrices are easier in Octave than structs)
-3. `vocab.m`: count word frequency in the training split, select top-N (N=1000 to start), assign indices 1..N, map unknown words to index N+1 (`<UNK>`). Convert `words` (cell array of strings) into `word_indices` (integer vector). Save the vocabulary to `vocab.mat`. Without this step the n-gram loop must operate on strings (`containers.Map`), which is ~100× slower than numeric matrix indexing.
-4. `baseline_ngram.m`: for each pair `(word_indices(i), word_indices(i+1))` count `count[label | idx1, idx2]` in a numeric matrix `zeros(N+1, N+1, 3)`. Prediction = argmax with Laplace smoothing. Analogous to "guess the median price on otomoto" from `car-price-prediction` — a no-model baseline for comparison.
+3. `baseline_ngram.m`: call `build_vocab` to map `words` → integer indices, then for each pair `(word_indices(i), word_indices(i+1))` count `count[label | idx1, idx2]` in a numeric matrix `zeros(N+1, N+1, 3)`. Prediction = argmax with Laplace smoothing. Analogous to "guess the median price on otomoto" from `car-price-prediction` — a no-model baseline for comparison.
 5. Evaluate on test set: **report F1 per class**, not accuracy.
 
 **What you will learn:** working with a corpus, Polish preprocessing pitfalls, awareness of class imbalance (expect ~85% NONE), difference between accuracy and F1.
