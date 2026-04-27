@@ -2,6 +2,8 @@
 %% Author: Tomasz Ceszke 2026
 
 function [words, labels] = labelize(tokens)
+    source('config/settings.m');
+
     words = {};
     labels = [];
 
@@ -10,13 +12,13 @@ function [words, labels] = labelize(tokens)
 
         if word(end) == ','
             words{end + 1} = word(1:end - 1);
-            labels(end + 1) = 1;
+            labels(end + 1) = C_LABELS.COMMA;
         elseif word(end) == '.'
             words{end + 1} = word(1:end - 1);
-            labels(end + 1) = 2;
+            labels(end + 1) = C_LABELS.PERIOD;
         else
             words{end + 1} = word;
-            labels(end + 1) = 0;
+            labels(end + 1) = C_LABELS.NONE;
         end
 
     end

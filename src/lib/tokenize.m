@@ -9,7 +9,8 @@ function tokens = tokenize(path)
     text = fread(fid, '*char')';
     text = lower(text);
     text = regexprep(text, '[^a-ząćęłńóśźż\s,.]', '');  
-    tokens = strsplit(text);                               
+    tokens = strsplit(text);
     tokens = strtrim(tokens);
+    tokens = tokens(~cellfun('isempty', tokens));
     fclose(fid);
 end
