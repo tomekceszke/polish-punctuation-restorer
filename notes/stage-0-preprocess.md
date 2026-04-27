@@ -53,12 +53,12 @@ Split by document id, not by token position — to prevent phrase leakage betwee
 
 Target proportions: 90% train / 10% test. A document belongs entirely to one set — never split mid-book.
 
-| Set | Dzieła | Rozmiar | Udział |
+| Set | Books | Size | Share |
 |---|---|---|---|
 | **train** | chlopi, lalka, ziemia-obiecana, nad-niemnem, kafka-proces, przedwiosnie, moralnosc-pani-dulskiej, saint-exupery-maly-ksiaze, orwell-rok-1984 | ~7.98 MB | 90.1% |
 | **test** | syzyfowe-prace, tajemniczy-ogrod | ~902 KB | 9.9% |
 
-Uzasadnienie testu: `syzyfowe-prace` to proza oryginalna (Żeromski — autor jest też w zbiorze treningowym przez `przedwiosnie`), `tajemniczy-ogrod` to tłumaczenie — wnosi różnorodność stylistyczną.
+Test set rationale: `syzyfowe-prace` is original Polish prose (Żeromski — the same author appears in training via `przedwiosnie`); `tajemniczy-ogrod` is a translation, adding stylistic variety.
 
 A document either belongs entirely to train or entirely to test. Never mix tokens from the same document across sets.
 

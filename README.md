@@ -51,7 +51,7 @@ Reference: `notes/stage-0-bigram-baseline.md`
 **Stage 0 — Preprocessing complete.**
 
 - `src/preprocess.m` tokenizes raw `.txt` files, strips non-Polish characters, and emits `(word, label)` pairs.
-- Corpus: *Lalka* (Prus) and *Chłopi* (Reymont) from [Wolne Lektury](https://wolnelektury.pl).
+- Corpus: Polish literary texts from [Wolne Lektury](https://wolnelektury.pl). Train/test split documented in `notes/stage-0-preprocess.md`.
 - Output: `data/processed/data.mat` — committed for reproducibility.
 
 ### Label encoding
@@ -71,18 +71,19 @@ ppr/
 ├── data/
 │   ├── raw/                 # Source .txt files (Wolne Lektury)
 │   └── processed/
-│       ├── data.mat         # words (1×N cell) + labels (1×N int) — committed
-│       └── vocab.mat        # word_indices integer vector — committed
+│       └── data.mat         # words (1×N cell) + labels (1×N int) — committed
 ├── src/
 │   ├── preprocess.m         # Entrypoint: raw text → data.mat
-│   ├── vocab.m              # Build top-N vocabulary, map words to indices
 │   ├── config/
-│   │   └── settings.m       # Shared constants (e.g. C_CUT_OFF_WORDS)
-│   └── lib/
-│       ├── tokenize.m       # Lowercase, strip, split on whitespace
-│       └── labelize.m       # Attach labels, strip trailing punctuation
+│   │   └── settings.m       # Shared constants: C_TRAINING_BOOKS, C_TEST_BOOKS, C_CUT_OFF_WORDS
+│   ├── lib/
+│   │   ├── tokenize.m       # Lowercase, strip, split on whitespace
+│   │   └── labelize.m       # Attach labels, strip trailing punctuation
+│   └── utils/
+│       └── epub2txt.py      # Convert .epub → .txt (stdlib only)
 ├── notes/
 │   ├── learning-plan.md          # Full learning curriculum (EN)
+│   ├── stage-0-preprocess.md     # Preprocessing design + train/test split
 │   ├── stage-0-bigram-baseline.md # Theory + reference for Stage 0 Step 3
 │   └── stage-0-results.md        # ← to be created after baseline runs
 ```
@@ -118,11 +119,7 @@ Output is written to `../data/processed/data.mat` as `words` and `labels`.
 
 **VS Code:** install the *Octave Debugger* extension. `.vscode/launch.json` is configured to run the current file with `octave-cli`.
 
-To add more source texts, edit the `books` cell array in `src/preprocess.m`:
-
-```matlab
-books = {'../data/raw/lalka.txt', '../data/raw/chlopi.txt'};
-```
+To change source texts, edit `C_TRAINING_BOOKS` and `C_TEST_BOOKS` in `src/config/settings.m`. To convert an `.epub` file first, run `src/utils/epub2txt.py`.
 
 ---
 
@@ -225,7 +222,7 @@ All stages are evaluated on the same held-out test set. Reported metrics:
 - **`.mat` files are committed** — pre-computed data is stored in the repo for reproducibility.
 - **Data flow:** `data/raw/*.txt` → `src/preprocess.m` → `data/processed/data.mat` (exports `words`, `labels`).
 - **Tokenization:** lowercase full text → strip all chars except Polish letters (`a-ząćęłńóśźż`), whitespace, `,`, `.` → split on whitespace. Punctuation stays attached to preceding word (e.g. `"dom,"`, `"koniec."`).
-- **Gotcha:** `preprocess.m` has a hardcoded `books` cell array — edit it to change source files.
+- **Gotcha:** source files are configured via `C_TRAINING_BOOKS` and `C_TEST_BOOKS` in `src/config/settings.m`.
 - **Notes:** `notes/learning-plan.md` (5-stage curriculum), `notes/stage-0-bigram-baseline.md` (theory + implementation reference for Stage 0).
 
 ---
