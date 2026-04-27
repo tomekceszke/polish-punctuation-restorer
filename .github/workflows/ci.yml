@@ -23,10 +23,9 @@ jobs:
         run: |
           octave --norc --no-gui --eval "
             addpath('lib');
-            source('config/settings.m');
             [words, labels] = labelize({'hello', 'world,', 'test.'});
             assert(isequal(words, {'hello', 'world', 'test'}));
-            assert(isequal(labels, [C_LABELS.NONE, C_LABELS.COMMA, C_LABELS.PERIOD]));
+            assert(isequal(labels, [1, 2, 3]));
             disp('labelize: OK');
           "
 
