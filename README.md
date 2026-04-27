@@ -58,9 +58,9 @@ Reference: `notes/stage-0-bigram-baseline.md`
 
 | Label | Value | Meaning |
 |-------|-------|---------|
-| No punctuation | `0` | Plain word |
-| Comma | `1` | Word followed by `,` |
-| Period | `2` | Word followed by `.` |
+| No punctuation | `1` | Plain word |
+| Comma | `2` | Word followed by `,` |
+| Period | `3` | Word followed by `.` |
 
 ---
 

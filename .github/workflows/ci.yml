@@ -19,19 +19,22 @@ jobs:
           sudo apt-get install -y octave
 
       - name: Smoke test — labelize
+        working-directory: src
         run: |
           octave --norc --no-gui --eval "
-            addpath('src/lib');
+            addpath('lib');
+            source('config/settings.m');
             [words, labels] = labelize({'hello', 'world,', 'test.'});
             assert(isequal(words, {'hello', 'world', 'test'}));
-            assert(isequal(labels, [0, 1, 2]));
+            assert(isequal(labels, [C_LABELS.NONE, C_LABELS.COMMA, C_LABELS.PERIOD]));
             disp('labelize: OK');
           "
 
       - name: Smoke test — tokenize (writes temp file)
+        working-directory: src
         run: |
           octave --norc --no-gui --eval "
-            addpath('src/lib');
+            addpath('lib');
             tmp = tempname();
             fid = fopen(tmp, 'w');
             fprintf(fid, 'Ala ma kota, a kot ma Alę.\n');
