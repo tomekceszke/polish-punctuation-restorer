@@ -43,3 +43,16 @@ jobs:
             delete(tmp);
             disp('tokenize: OK');
           "
+
+      - name: Smoke test — build_vocab
+        working-directory: src
+        run: |
+          octave --norc --no-gui --eval "
+            addpath('lib');
+            words = {'a','a','a','b','b','c'};
+            idx = build_vocab(words, 2);
+            assert(idx(1) == 1);
+            assert(idx(4) == 2);
+            assert(idx(6) == 3);
+            disp('build_vocab: OK');
+          "
