@@ -15,3 +15,9 @@ plan-nauki.md
 *.tgz
 *.zip
 *.tar.gz
+
+# Raw epub sources — txt versions committed instead
+data/raw/*.epub
+
+# Octave runtime artifact
+octave-workspace

@@ -71,7 +71,7 @@ ppr/
 ├── data/
 │   ├── raw/                 # Source .txt files (Wolne Lektury)
 │   └── processed/
-│       └── data.mat         # words (1×N cell) + labels (1×N int) — committed
+│       └── data.mat         # words (1×N cell), labels (1×N int), doc_ids (1×N int) — committed
 ├── src/
 │   ├── preprocess.m         # Entrypoint: raw text → data.mat
 │   ├── config/
@@ -115,7 +115,7 @@ cd src
 octave-cli preprocess.m
 ```
 
-Output is written to `../data/processed/data.mat` as `words` and `labels`.
+Output is written to `../data/processed/data.mat` as `words`, `labels`, and `doc_ids`.
 
 **VS Code:** install the *Octave Debugger* extension. `.vscode/launch.json` is configured to run the current file with `octave-cli`.
 
@@ -220,7 +220,7 @@ All stages are evaluated on the same held-out test set. Reported metrics:
 
 - **Runtime:** GNU Octave (`octave-cli`), MATLAB-syntax compatible.
 - **`.mat` files are committed** — pre-computed data is stored in the repo for reproducibility.
-- **Data flow:** `data/raw/*.txt` → `src/preprocess.m` → `data/processed/data.mat` (exports `words`, `labels`).
+- **Data flow:** `data/raw/*.txt` → `src/preprocess.m` → `data/processed/data.mat` (exports `words`, `labels`, `doc_ids`).
 - **Tokenization:** lowercase full text → strip all chars except Polish letters (`a-ząćęłńóśźż`), whitespace, `,`, `.` → split on whitespace. Punctuation stays attached to preceding word (e.g. `"dom,"`, `"koniec."`).
 - **Gotcha:** source files are configured via `C_TRAINING_BOOKS` and `C_TEST_BOOKS` in `src/config/settings.m`.
 - **Notes:** `notes/learning-plan.md` (5-stage curriculum), `notes/stage-0-bigram-baseline.md` (theory + implementation reference for Stage 0).
