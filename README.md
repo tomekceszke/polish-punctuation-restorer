@@ -25,8 +25,8 @@ For reference: GPT-2 small has 117M parameters — roughly 400× more.
 
 | Stage | Status | Done when |
 |-------|--------|-----------|
-| **Stage 0 — Preprocessing** | ✅ Done | `preprocess.m` runs, `data.mat` committed |
-| **Stage 0 — Bigram baseline** | 🔄 In progress | `baseline_ngram.m` + F1 report in `notes/stage-0-results.md` |
+| **Stage 0 — Preprocessing** | ✅ Done | `preprocess.m` runs, train/test split committed |
+| **Stage 0 — Bigram baseline** | ✅ Done | Macro-F1 = 0.506, results in `notes/stage-0-results.md` |
 | **Stage 1 — MLP + backprop** | ⬜ Planned | Gradient check passes, macro-F1 beats baseline by ≥10 pp |
 | **Stage 2a — Bi-LSTM** | ⬜ Outlook | Decision after Stage 1 |
 | **Stage 2b — Mini-Transformer** | ⬜ Outlook | Decision after Stage 1 |
@@ -34,25 +34,14 @@ For reference: GPT-2 small has 117M parameters — roughly 400× more.
 | **Stage 4 — Multi-task** | ⬜ Outlook | — |
 | **Stage 5 — REST deploy** | ⬜ Optional | — |
 
-### Current task
-
-**Stage 0, Step 4** — implement `baseline_ngram.m`:
-- For each pair `(word_indices(i), word_indices(i+1))` count `count[label | idx1, idx2]` in `zeros(N+1, N+1, 3)`
-- Prediction = argmax with Laplace smoothing
-- Evaluate on test set, report Precision / Recall / F1 per class + Macro-F1
-- Save results to `notes/stage-0-results.md`
-
-Reference: `notes/stage-0-bigram-baseline.md`
-
----
-
 ## Current State
 
-**Stage 0 — Preprocessing complete.**
+**Stage 0 — Complete.**
 
-- `src/preprocess.m` tokenizes raw `.txt` files, strips non-Polish characters, and emits `(word, label)` pairs.
+- `src/preprocess.m` tokenizes raw `.txt` files, strips non-Polish characters, emits `(word, label)` pairs.
 - Corpus: Polish literary texts from [Wolne Lektury](https://wolnelektury.pl). Train/test split documented in `notes/stage-0-preprocess.md`.
-- Output: `data/processed/data.mat` — committed for reproducibility.
+- Output: `data/processed/train.mat`, `test.mat`, `vocab.mat` — committed for reproducibility.
+- Bigram baseline: Macro-F1 = 0.506. Full results in `notes/stage-0-results.md`.
 
 ### Label encoding
 
@@ -71,21 +60,29 @@ ppr/
 ├── data/
 │   ├── raw/                 # Source .txt files (Wolne Lektury)
 │   └── processed/
-│       └── data.mat         # words (1×N cell), labels (1×N int), doc_ids (1×N int) — committed
+│       ├── train.mat        # train_words, train_labels (~90%)
+│       ├── test.mat         # test_words, test_labels (~10%)
+│       └── vocab.mat        # top-1000 words from train
 ├── src/
-│   ├── preprocess.m         # Entrypoint: raw text → data.mat
+│   ├── preprocess.m         # Entrypoint: raw text → train/test split
+│   ├── baseline_ngram.m     # Stage 0: bigram frequency baseline
 │   ├── config/
-│   │   └── settings.m       # Shared constants: C_TRAINING_BOOKS, C_TEST_BOOKS, C_CUT_OFF_WORDS
+│   │   └── settings.m       # Shared constants: C_TRAIN_BOOKS, C_TEST_BOOKS, C_CUT_OFF_WORDS
 │   ├── lib/
 │   │   ├── tokenize.m       # Lowercase, strip, split on whitespace
-│   │   └── labelize.m       # Attach labels, strip trailing punctuation
+│   │   ├── labelize.m       # Attach labels, strip trailing punctuation
+│   │   ├── process.m        # Load and process a single book file
+│   │   ├── build_vocab.m    # Build top-N vocabulary from words
+│   │   ├── get_word_indices.m # Map words to vocab indices (UNK → N+1)
+│   │   └── metrics.m        # Confusion matrix, precision/recall/F1 per class
 │   └── utils/
 │       └── epub2txt.py      # Convert .epub → .txt (stdlib only)
 ├── notes/
 │   ├── learning-plan.md          # Full learning curriculum (EN)
+│   ├── plan-nauki.md             # Full learning curriculum (PL)
 │   ├── stage-0-preprocess.md     # Preprocessing design + train/test split
-│   ├── stage-0-bigram-baseline.md # Theory + reference for Stage 0 Step 3
-│   └── stage-0-results.md        # ← to be created after baseline runs
+│   ├── stage-0-bigram-baseline.md # Theory + implementation reference
+│   └── stage-0-results.md        # Baseline results: confusion matrix, F1 per class
 ```
 
 Planned additions (per learning plan):
@@ -115,11 +112,11 @@ cd src
 octave-cli preprocess.m
 ```
 
-Output is written to `../data/processed/data.mat` as `words`, `labels`, and `doc_ids`.
+Output is written to `../data/processed/train.mat`, `test.mat`, and `vocab.mat`.
 
 **VS Code:** install the *Octave Debugger* extension. `.vscode/launch.json` is configured to run the current file with `octave-cli`.
 
-To change source texts, edit `C_TRAINING_BOOKS` and `C_TEST_BOOKS` in `src/config/settings.m`. To convert an `.epub` file first, run `src/utils/epub2txt.py`.
+To change source texts, edit `C_TRAIN_BOOKS` and `C_TEST_BOOKS` in `src/config/settings.m`. To convert an `.epub` file first, run `src/utils/epub2txt.py`.
 
 ---
 
@@ -127,13 +124,18 @@ To change source texts, edit `C_TRAINING_BOOKS` and `C_TEST_BOOKS` in `src/confi
 
 This project follows a 5-stage curriculum, building complexity incrementally.
 
-### Stage 0 — Statistical Baseline *(preprocessing done, baseline in progress)*
+### Stage 0 — Statistical Baseline ✅ Done
 
-N-gram frequency model: for each word pair `(w_i, w_{i+1})`, predict the most common following punctuation using Laplace-smoothed counts.
+N-gram frequency model: for each word pair `(w_i, w_{i+1})`, predict the most common following punctuation using counts.
 
-- Teaches: corpus handling, Polish preprocessing pitfalls, class imbalance (~85% NONE), accuracy vs F1.
-- Target: F1 ~0.4–0.55 for PERIOD, ~0.15–0.3 for COMMA.
-- Done when: `baseline_ngram.m` runs + F1 report in `notes/stage-0-results.md`.
+| Class  | Train F1 | Test F1 |
+|--------|----------|---------|
+| NONE   | 0.9220   | 0.9278  |
+| COMMA  | 0.5114   | 0.4877  |
+| PERIOD | 0.3187   | 0.1020  |
+| Macro  | 0.5840   | 0.5058  |
+
+Full results: `notes/stage-0-results.md`.
 
 ### Stage 1 — MLP with Hand-Written Backprop *(planned)*
 
@@ -220,9 +222,9 @@ All stages are evaluated on the same held-out test set. Reported metrics:
 
 - **Runtime:** GNU Octave (`octave-cli`), MATLAB-syntax compatible.
 - **`.mat` files are committed** — pre-computed data is stored in the repo for reproducibility.
-- **Data flow:** `data/raw/*.txt` → `src/preprocess.m` → `data/processed/data.mat` (exports `words`, `labels`, `doc_ids`).
+- **Data flow:** `data/raw/*.txt` → `src/preprocess.m` → `data/processed/train.mat` + `test.mat` + `vocab.mat`.
 - **Tokenization:** lowercase full text → strip all chars except Polish letters (`a-ząćęłńóśźż`), whitespace, `,`, `.` → split on whitespace. Punctuation stays attached to preceding word (e.g. `"dom,"`, `"koniec."`).
-- **Gotcha:** source files are configured via `C_TRAINING_BOOKS` and `C_TEST_BOOKS` in `src/config/settings.m`.
+- **Gotcha:** source files are configured via `C_TRAIN_BOOKS` and `C_TEST_BOOKS` in `src/config/settings.m`.
 - **Notes:** `notes/learning-plan.md` (5-stage curriculum), `notes/stage-0-bigram-baseline.md` (theory + implementation reference for Stage 0).
 
 ---
