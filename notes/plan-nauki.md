@@ -58,7 +58,7 @@ polish-punctuation-restorer/
 └── README.md
 ```
 
-## Etap 0 — Baseline statystyczny (1–2 wieczory)
+## Etap 0 — Baseline statystyczny ✓ GOTOWY
 
 **Cel:** mieć *floor*, który każdy kolejny etap musi pobić. Zero ML. *Analogicznie do tego, jak w `ml-applications` najpierw opisujesz linear regression jako punkt wyjścia przed logistic regression i NN.*
 
@@ -155,6 +155,6 @@ Decyzja po Etapie 1, na podstawie tego, co cię wciągnie.
 
 ## Definicja ukończenia każdego etapu
 
-Etap 0: działający `baseline_ngram.m` + raport F1 na zbiorze testowym w `notes/etap-0-wyniki.md`.
+Etap 0: ✓ Gotowy. Macro-F1 = 0.506. Wyniki w `notes/stage-0-results.md`.
 
 Etap 1: gradient check zalicza, sieć trenuje stabilnie, macro-F1 > macro-F1 baseline'u o co najmniej 10 punktów procentowych, wyprowadzenia w `notes/` kompletne.

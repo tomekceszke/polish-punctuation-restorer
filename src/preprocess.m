@@ -8,24 +8,16 @@ more off;
 source('config/settings.m');
 addpath('lib');
 
-books = C_TRAINING_BOOKS;
+printf('Processing training data...\n\n');
+[train_words, train_labels] = process(C_TRAIN_BOOKS);
+printf('Done. %d words labeled.\n\n', length(train_words));
+save '../data/processed/train.mat' train_words train_labels;
+printf('Data saved.\n\n');
 
-tokens = {};
-doc_ids = [];
+printf('Processing testing data...\n\n');
+[test_words, test_labels] = process(C_TEST_BOOKS);
+printf('Done. %d words labeled.\n\n', length(test_words));
+save '../data/processed/test.mat' test_words test_labels;
+printf('Data saved.\n\n');
 
-for i = 1:length(books)
-    printf('Loading: %s\n', books{i});
-    prev_length = length(tokens);
-    curr = tokenize(books{i});
-    doc_ids(prev_length+1: prev_length + length(curr)) = i;
-    tokens = [tokens, curr];
-    printf('  -> %d tokens\n', length(tokens) - prev_length);
-end
-
-printf('\nTotal tokens: %d\n', length(tokens));
-
-printf('Labelizing...\n');
-[words, labels] = labelize(tokens);
-printf('Done. %d words labeled.\n\n', length(words));
-
-save ../data/processed/data.mat words labels doc_ids
+printf('All done.\n\n');

@@ -50,9 +50,39 @@ jobs:
           octave --norc --no-gui --eval "
             addpath('lib');
             words = {'a','a','a','b','b','c'};
-            idx = build_vocab(words, 2);
-            assert(idx(1) == 1);
-            assert(idx(4) == 2);
-            assert(idx(6) == 3);
+            vocab = build_vocab(words, 2);
+            assert(iscell(vocab));
+            assert(length(vocab) == 2);
+            assert(strcmp(vocab{1}, 'a'));
+            assert(strcmp(vocab{2}, 'b'));
             disp('build_vocab: OK');
+          "
+
+      - name: Smoke test — get_word_indices
+        working-directory: src
+        run: |
+          octave --norc --no-gui --eval "
+            addpath('lib');
+            vocab = {'a', 'b', 'c'};
+            words = {'a', 'b', 'z'};
+            idx = get_word_indices(words, vocab);
+            assert(idx(1) == 1);
+            assert(idx(2) == 2);
+            assert(idx(3) == 4);
+            disp('get_word_indices: OK');
+          "
+
+      - name: Smoke test — metrics
+        working-directory: src
+        run: |
+          octave --norc --no-gui --eval "
+            addpath('lib');
+            y      = [1 2 3 1]';
+            y_pred = [1 2 3 1]';
+            [C, ~, ~, f1] = metrics(y, y_pred);
+            assert(C(1,1) == 1);
+            assert(C(2,2) == 1);
+            assert(C(3,3) == 1);
+            assert(all(abs(f1 - 1.0) < 1e-9));
+            disp('metrics: OK');
           "

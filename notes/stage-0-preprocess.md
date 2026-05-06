@@ -10,15 +10,17 @@ Transform raw `.txt` files into a numeric representation that `baseline_ngram.m`
 
 ## Output of `preprocess.m`
 
-Saved to `data/processed/data.mat`:
+Saved to two files after train/test split:
+
+- `data/processed/train.mat` — variables: `train_words`, `train_labels`
+- `data/processed/test.mat` — variables: `test_words`, `test_labels`
 
 | Variable | Type | Description |
 |---|---|---|
-| `words` | cell array of strings | one token per position |
-| `labels` | numeric vector | 1=NONE, 2=COMMA, 3=PERIOD — label after each token |
-| `doc_ids` | numeric vector | which document each token came from (1, 2, 3, ...) |
+| `train_words` / `test_words` | cell array of strings | one token per position |
+| `train_labels` / `test_labels` | numeric vector | 1=NONE, 2=COMMA, 3=PERIOD — label after each token |
 
-All three vectors have the same length.
+All vectors within a file have the same length.
 
 ---
 

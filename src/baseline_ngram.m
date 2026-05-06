@@ -8,35 +8,82 @@ more off;
 source('config/settings.m');
 addpath('lib');
 
-printf('Loading...\n');
-load '../data/processed/data.mat'
-printf('Loaded %d tokens and %d labels\n', length(words), length(labels));
+printf('Loading data...\n');
+load '../data/processed/train.mat'
+printf('Loaded training %d tokens and %d labels\n', length(train_words), length(train_labels));
+load '../data/processed/test.mat'
+printf('Loaded testing %d tokens and %d labels\n', length(test_words), length(test_labels));
 
-word_indices = build_vocab(words, C_CUT_OFF_WORDS);
-printf('Loaded %d word indices\n', length(word_indices));
+% vocab
+printf('Loading vocabulary...\n');
+
+if ~exist('../data/processed/vocab.mat', 'file')
+    vocab = build_vocab(train_words, C_CUT_OFF_WORDS);
+    save '../data/processed/vocab.mat' vocab;
+else
+    load '../data/processed/vocab.mat';
+end
+
+printf('Loaded %d top unique words\n', length(vocab));
+
+% indices
+printf('Getting training/testing word indices...\n');
+train_word_indices = get_word_indices(train_words, vocab);
+printf('Got %d training word indices\n', length(train_word_indices));
+test_word_indices = get_word_indices(test_words, vocab);
+printf('Got %d testing word indices\n', length(test_word_indices));
+
+% learning (only on trained data)
 
 % bigram counts: counter(idx1, idx2, label) = number of occurrences in corpus
 counter = zeros(C_CUT_OFF_WORDS + 1, C_CUT_OFF_WORDS + 1, numel(fieldnames(C_LABELS)));
-% last position left as 0 (no next word), excluded from evaluation
-y_pred = zeros(length(word_indices), 1);
-y_true = labels;
 
-printf('Counting occurrences...\n');
 % pass 1: accumulate bigram-label counts
-for i = 1:length(word_indices)-1
-    idx1 = word_indices(i);
-    idx2 = word_indices(i + 1);
-    l = labels(i);
+printf('Counting occurrences...\n');
+
+for i = 1:length(train_word_indices) - 1
+    idx1 = train_word_indices(i);
+    idx2 = train_word_indices(i + 1);
+    l = train_labels(i);
     counter(idx1, idx2, l) += 1;
 end
 
-printf('Predicting...\n');
-% pass 2: predict most frequent label for each bigram (trained and tested on same data)
-for i = 1:length(word_indices)-1
-    idx1 = word_indices(i);
-    idx2 = word_indices(i + 1);
+% predicting (on trained and tested data)
+
+% predict most frequent label for each bigram on trained data
+printf('Predicting on trained data...\n');
+y_pred_trained = zeros(length(train_word_indices), 1);
+
+for i = 1:length(train_word_indices) - 1
+    idx1 = train_word_indices(i);
+    idx2 = train_word_indices(i + 1);
     [~, idx] = max(counter(idx1, idx2, :));
-    y_pred(i) = idx;
+    y_pred_trained(i) = idx;
+end
+[~, ~, ~, f1_train] = metrics(train_labels, y_pred_trained);
+
+% predict most frequent label for each bigram on tested data
+y_pred_tested = zeros(length(test_word_indices), 1);
+printf('Predicting on tested data...\n');
+
+for i = 1:length(test_word_indices) - 1
+    idx1 = test_word_indices(i);
+    idx2 = test_word_indices(i + 1);
+    [~, idx] = max(counter(idx1, idx2, :));
+    y_pred_tested(i) = idx;
 end
 
-printf('Done.\n');
+[confusion_matrix_test, ~, ~, f1_test] = metrics(test_labels, y_pred_tested);
+
+labels = fieldnames(C_LABELS);
+
+printf('\nConfusion matrix (test):\n');
+disp(confusion_matrix_test);
+
+printf('%-8s %10s %10s\n', 'Class', 'Train F1', 'Test F1');
+for i = 1:length(labels)
+    printf('%-8s %10.4f %10.4f\n', labels{i}, f1_train(i), f1_test(i));
+end
+printf('%-8s %10.4f %10.4f\n', 'Macro', mean(f1_train), mean(f1_test));
+
+printf('\nDone.\n');

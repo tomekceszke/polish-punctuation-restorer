@@ -64,7 +64,7 @@ polish-punctuation-restorer/
 
 ---
 
-## Stage 0 — Statistical Baseline (1–2 evenings)
+## Stage 0 — Statistical Baseline ✓ DONE
 
 **Goal:** have a *floor* that every subsequent stage must beat. Zero ML. Analogous to how in `ml-applications` you first describe linear regression as a starting point before logistic regression and NN.
 
@@ -172,6 +172,6 @@ Decision after Stage 1, based on what pulls you in.
 
 ## Definition of Done
 
-**Stage 0:** working `baseline_ngram.m` + F1 report on the test set in `notes/stage-0-results.md`.
+**Stage 0:** ✓ Done. Macro-F1 = 0.506. Results in `notes/stage-0-results.md`.
 
 **Stage 1:** gradient check passes, network trains stably, Macro-F1 > baseline Macro-F1 by at least 10 percentage points, derivations in `notes/` complete.

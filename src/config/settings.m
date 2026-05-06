@@ -5,7 +5,7 @@ C_LABELS = struct('NONE', 1, 'COMMA', 2, 'PERIOD', 3);
 
 C_CUT_OFF_WORDS = 1000;
 
-C_TRAINING_BOOKS = {
+C_TRAIN_BOOKS = {
   '../data/raw/chlopi.txt',
   '../data/raw/lalka.txt',
   '../data/raw/ziemia-obiecana.txt',
