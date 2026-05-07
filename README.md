@@ -27,7 +27,7 @@ For reference: GPT-2 small has 117M parameters — roughly 400× more.
 |-------|--------|-----------|
 | **Stage 0 — Preprocessing** | ✅ Done | `preprocess.m` runs, train/test split committed |
 | **Stage 0 — Bigram baseline** | ✅ Done | Macro-F1 = 0.506, results in `notes/stage-0-results.md` |
-| **Stage 1 — MLP + backprop** | ⬜ Planned | Gradient check passes, macro-F1 beats baseline by ≥10 pp |
+| **Stage 1 — MLP + backprop** | 🔄 In Progress | Gradient check passes, macro-F1 beats baseline by ≥10 pp |
 | **Stage 2a — Bi-LSTM** | ⬜ Outlook | Decision after Stage 1 |
 | **Stage 2b — Mini-Transformer** | ⬜ Outlook | Decision after Stage 1 |
 | **Stage 3 — Extended punctuation** | ⬜ Outlook | — |
@@ -41,7 +41,7 @@ For reference: GPT-2 small has 117M parameters — roughly 400× more.
 - `src/preprocess.m` tokenizes raw `.txt` files, strips non-Polish characters, emits `(word, label)` pairs.
 - Corpus: Polish literary texts from [Wolne Lektury](https://wolnelektury.pl). Train/test split documented in `notes/stage-0-preprocess.md`.
 - Output: `data/processed/train.mat`, `test.mat`, `vocab.mat` — committed for reproducibility.
-- Bigram baseline: Macro-F1 = 0.506. Full results in `notes/stage-0-results.md`.
+- Bigram baseline: Macro-F1 = 0.511 (V=5000). Full results in `notes/stage-0-results.md`.
 
 ### Label encoding
 
@@ -62,12 +62,12 @@ ppr/
 │   └── processed/
 │       ├── train.mat        # train_words, train_labels (~90%)
 │       ├── test.mat         # test_words, test_labels (~10%)
-│       └── vocab.mat        # top-1000 words from train
+│       └── vocab.mat        # top-5000 words from train
 ├── src/
 │   ├── preprocess.m         # Entrypoint: raw text → train/test split
 │   ├── baseline_ngram.m     # Stage 0: bigram frequency baseline
 │   ├── config/
-│   │   └── settings.m       # Shared constants: C_TRAIN_BOOKS, C_TEST_BOOKS, C_CUT_OFF_WORDS
+│   │   └── settings.m       # Shared constants: C_TRAIN_BOOKS, C_TEST_BOOKS, C_V
 │   ├── lib/
 │   │   ├── tokenize.m       # Lowercase, strip, split on whitespace
 │   │   ├── labelize.m       # Attach labels, strip trailing punctuation
@@ -130,12 +130,35 @@ N-gram frequency model: for each word pair `(w_i, w_{i+1})`, predict the most co
 
 | Class  | Train F1 | Test F1 |
 |--------|----------|---------|
-| NONE   | 0.9220   | 0.9278  |
-| COMMA  | 0.5114   | 0.4877  |
-| PERIOD | 0.3187   | 0.1020  |
-| Macro  | 0.5840   | 0.5058  |
+| NONE   | 0.9403   | 0.9255  |
+| COMMA  | 0.6492   | 0.4599  |
+| PERIOD | 0.5580   | 0.1463  |
+| Macro  | 0.7159   | 0.5106  |
 
-Full results: `notes/stage-0-results.md`.
+V=5000, bigram argmax. Full results: `notes/stage-0-results.md`.
+
+### Stage 1 — MLP with Hand-Written Backprop 🔄 In Progress
+
+Architecture: embedding lookup → linear+ReLU → linear → softmax. All gradients derived by hand, verified numerically.
+
+```
+INPUT (5 word indices)
+  [w_{i-2}, w_{i-1}, w_i, w_{i+1}, w_{i+2}]
+         |
+         | lookup in E (5000 × 50)
+         ↓
+EMBEDDING (250 numbers)
+         |
+         | W1 (128 × 250) + b1 + ReLU
+         ↓
+HIDDEN LAYER (128 numbers)
+         |
+         | W2 (3 × 128) + b2 + softmax
+         ↓
+OUTPUT  [p_NONE, p_COMMA, p_PERIOD]
+```
+
+~282,500 parameters. Full notes: `notes/stage-1-mlp.md`.
 
 ### Stage 1 — MLP with Hand-Written Backprop *(planned)*
 
