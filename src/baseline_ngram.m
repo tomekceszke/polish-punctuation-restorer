@@ -18,7 +18,7 @@ printf('Loaded testing %d tokens and %d labels\n', length(test_words), length(te
 printf('Loading vocabulary...\n');
 
 if ~exist('../data/processed/vocab.mat', 'file')
-    vocab = build_vocab(train_words, C_CUT_OFF_WORDS);
+    vocab = build_vocab(train_words, C_V);
     save '../data/processed/vocab.mat' vocab;
 else
     load '../data/processed/vocab.mat';
@@ -36,9 +36,9 @@ printf('Got %d testing word indices\n', length(test_word_indices));
 % learning (only on trained data)
 
 % bigram counts: counter(idx1, idx2, label) = number of occurrences in corpus
-counter = zeros(C_CUT_OFF_WORDS + 1, C_CUT_OFF_WORDS + 1, numel(fieldnames(C_LABELS)));
+counter = zeros(C_V + 1, C_V + 1, numel(fieldnames(C_LABELS)));
 
-% pass 1: accumulate bigram-label counts
+% accumulate bigram-label counts
 printf('Counting occurrences...\n');
 
 for i = 1:length(train_word_indices) - 1
@@ -47,8 +47,6 @@ for i = 1:length(train_word_indices) - 1
     l = train_labels(i);
     counter(idx1, idx2, l) += 1;
 end
-
-% predicting (on trained and tested data)
 
 % predict most frequent label for each bigram on trained data
 printf('Predicting on trained data...\n');
