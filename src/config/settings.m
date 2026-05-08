@@ -20,4 +20,10 @@ C_TEST_BOOKS = {
   '../data/raw/tajemniczy-ogrod.txt',
 };
 
-C_V= 5000; % vocab size
+  C_V = 5000;        % vocab size
+  C_D = 50;          % embedding dim
+  C_H = 128;         % hidden units
+  C_K = 2;           % context radius
+  C_LR = 0.01;       % learning rate
+  C_BATCH = 64;      % batch size
+  C_EPOCHS = 10;
