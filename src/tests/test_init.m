@@ -1,3 +1,6 @@
+%% Polish Punctuation Restorer
+%% Author: Tomasz Ceszke 2026
+
 addpath('..');
 [E, W1, b1, W2, b2] = mlp_init(5000, 50, 128, 2, 3);
 size(E)
