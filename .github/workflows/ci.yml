@@ -72,6 +72,18 @@ jobs:
             disp('get_word_indices: OK');
           "
 
+      - name: Smoke test — build_windows
+        working-directory: src/tests
+        run: octave --norc --no-gui test_build_windows.m && echo "build_windows: OK"
+
+      - name: Smoke test — mlp_init
+        working-directory: src/tests
+        run: octave --norc --no-gui test_init.m && echo "mlp_init: OK"
+
+      - name: Smoke test — mlp_forward
+        working-directory: src/tests
+        run: octave --norc --no-gui test_mlp_forward.m && echo "mlp_forward: OK"
+
       - name: Smoke test — metrics
         working-directory: src
         run: |

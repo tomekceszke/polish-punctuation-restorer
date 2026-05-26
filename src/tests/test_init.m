@@ -3,6 +3,8 @@
 
 addpath('..');
 [E, W1, b1, W2, b2] = mlp_init(5000, 50, 128, 2, 3);
-size(E)
-size(W1)
-size(W2)
+assert(isequal(size(E),  [5000, 50]));
+assert(isequal(size(W1), [128, 250]));
+assert(isequal(size(b1), [128, 1]));
+assert(isequal(size(W2), [3, 128]));
+assert(isequal(size(b2), [3, 1]));
