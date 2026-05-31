@@ -81,7 +81,7 @@ jobs:
       - name: Smoke test — mlp_init
         working-directory: src/tests
         run: |
-          octave --norc --no-gui test_init.m
+          octave --norc --no-gui test_mlp_init.m
           echo "mlp_init: OK"
 
       - name: Smoke test — mlp_forward
@@ -89,6 +89,12 @@ jobs:
         run: |
           octave --norc --no-gui test_mlp_forward.m
           echo "mlp_forward: OK"
+
+      - name: Smoke test — mlp_loss
+        working-directory: src/tests
+        run: |
+          octave --norc --no-gui test_mlp_loss.m
+          echo "mlp_loss: OK"
 
       - name: Smoke test — metrics
         working-directory: src

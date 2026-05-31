@@ -8,6 +8,7 @@
 % W2 - second linear layer weights, [c*h] (3*128)
 % b2 - bias 2 [c] (3)
 % k - context radius (window = 2k+1 words) (2)
+% probs - 
 function [probs, cache] = mlp_forward(X_idx, E, W1, b1, W2, b2, k)
     d = columns(E); % 50
     x_embed = zeros(rows(X_idx), (2 * k + 1) * d); % N*250
@@ -22,7 +23,7 @@ function [probs, cache] = mlp_forward(X_idx, E, W1, b1, W2, b2, k)
 
     z = s2 - max(s2, [], 2); % subtract max per row for numerical stability (prevents exp overflow) [N*3]
     e = exp(z); % [N*3]
-    probs = e ./ sum(e, 2); % softmax, each row divided by its sum (N*3./N*1)=(N*3)
+    probs = e ./ sum(e, 2); % softmax, each row divided by its sum (N*3./N*1)=[N*3]
 
     cache = struct("x_embed", x_embed, "s1", s1, "a1", a1);
 
