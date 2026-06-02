@@ -96,6 +96,12 @@ jobs:
           octave --norc --no-gui test_mlp_loss.m
           echo "mlp_loss: OK"
 
+      - name: Grad check — mlp_backward
+        working-directory: src/tests
+        run: |
+          octave --norc --no-gui test_grad_check.m
+          echo "grad_check: OK"
+
       - name: Smoke test — metrics
         working-directory: src
         run: |

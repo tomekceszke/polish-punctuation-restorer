@@ -8,6 +8,6 @@ function [loss] = mlp_loss(probs, y)
     
     % f(x) = -log(x) - cross-entropy loss
     N = size(probs, 1);
-    loss = mean(-log(probs(sub2ind(size(probs), (1:N)', y'))));
+    loss = mean(-log(probs(sub2ind(size(probs), (1:N)', y))));
 
 end
