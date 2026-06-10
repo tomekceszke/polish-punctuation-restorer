@@ -502,6 +502,6 @@ A compact reference (cheat-sheet) for the symbols and equations used above.
 | Weight gradients | $dW_2 = \delta_2^\top a_1,\quad dW_1 = \delta_1^\top x$ | §4.5 |
 | Bias gradients | $db = \sum_i \delta_i$ | §4.5 |
 | Embedding gradient | scatter-add: $dE(\text{idx},:)\mathrel{+}= \delta_\text{embed}$ | §4.5 |
-| He initialization | $W \sim \mathcal{N}\!\big(0,\, 2/\text{fan\_in}\big)$ | §4.2, [8] |
+| He initialization | $W \sim \mathcal{N}\!\big(0,\, 2/\text{fan-in}\big)$ | §4.2, [8] |
 | Macro-F1 | $\tfrac{1}{c}\sum_{k} F1_k,\quad F1_k = \dfrac{2\,P_k R_k}{P_k + R_k}$ | §3.4, §5.1 |
 | Gradient check | $\dfrac{|g_\text{analytic} - g_\text{num}|}{|g_\text{analytic}| + |g_\text{num}|} < 10^{-5}$ | §4.6 |
