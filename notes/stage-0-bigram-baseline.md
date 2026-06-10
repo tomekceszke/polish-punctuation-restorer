@@ -77,14 +77,13 @@ Where K = number of classes = 3. For argmax this changes nothing — adding the 
 Split by **documents**, not by sentences — to prevent phrase leakage between sets.
 
 ```
-Lalka, Quo Vadis, ...    → train  (80%)
-Przedwiośnie             → val    (10%)  ← untouched until Stage 1
-Potop                    → test   (10%)
+Chłopi, Lalka, ...                  → train  (90%)
+Syzyfowe Prace, Tajemniczy Ogród    → test   (10%)
 ```
 
 If you split by sentences, the phrase "stał na wzgórzu" might appear in both train and test — the model has already seen it, the result is artificially good. This is called **data leakage**.
 
-The validation set is not used here. Save it for Stage 1.
+No validation set exists yet — Stage 1 (early stopping) will need one, carved out of the train documents so the test set stays untouched. Details in [stage-0-preprocess.md](stage-0-preprocess.md).
 
 ---
 

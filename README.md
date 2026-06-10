@@ -6,7 +6,7 @@ An educational project — building a sequential punctuation classifier from scr
 
 **Model type:** sequence labeling / token classification (NLP task: punctuation restoration).
 
-**Stage 1 model:** shallow feedforward neural network — 3-layer MLP, ~280K parameters.
+**Stage 1 model:** shallow feedforward neural network — an MLP with a single ReLU hidden layer over learned embeddings, ~282K parameters.
 
 | Component | Shape | Parameters |
 |-----------|-------|------------|
@@ -21,12 +21,18 @@ For reference: GPT-2 small has 117M parameters — roughly 400× more.
 
 ---
 
+## Paper
+
+A standards-conforming academic write-up of this project — goal, methodology, results, and conclusions — lives in [`paper/paper.md`](paper/paper.md) (work in progress; build instructions in [`paper/README.md`](paper/README.md)).
+
+---
+
 ## Progress
 
 | Stage | Status | Done when |
 |-------|--------|-----------|
 | **Stage 0 — Preprocessing** | ✅ Done | `preprocess.m` runs, train/test split committed |
-| **Stage 0 — Bigram baseline** | ✅ Done | Macro-F1 = 0.506, results in `notes/stage-0-results.md` |
+| **Stage 0 — Bigram baseline** | ✅ Done | Macro-F1 = 0.511, results in `notes/stage-0-results.md` |
 | **Stage 1 — MLP + backprop** | 🔄 In Progress | Gradient check passes, macro-F1 beats baseline by ≥10 pp |
 | **Stage 2a — Bi-LSTM** | ⬜ Outlook | Decision after Stage 1 |
 | **Stage 2b — Mini-Transformer** | ⬜ Outlook | Decision after Stage 1 |
@@ -66,6 +72,11 @@ ppr/
 ├── src/
 │   ├── preprocess.m         # Entrypoint: raw text → train/test split
 │   ├── baseline_ngram.m     # Stage 0: bigram frequency baseline
+│   ├── mlp_init.m           # Stage 1: parameter initialization (E, W1, b1, W2, b2)
+│   ├── mlp_forward.m        # Stage 1: forward pass with activation cache
+│   ├── mlp_loss.m           # Stage 1: weighted cross-entropy loss
+│   ├── mlp_backward.m       # Stage 1: manual backprop (all gradients)
+│   ├── train.m              # Stage 1: training loop (WIP)
 │   ├── config/
 │   │   └── settings.m       # Shared constants: C_TRAIN_BOOKS, C_TEST_BOOKS, C_V
 │   ├── lib/
@@ -74,25 +85,24 @@ ppr/
 │   │   ├── process.m        # Load and process a single book file
 │   │   ├── build_vocab.m    # Build top-N vocabulary from words
 │   │   ├── get_word_indices.m # Map words to vocab indices (UNK → N+1)
+│   │   ├── build_windows.m  # Build ±k context windows of word indices
 │   │   └── metrics.m        # Confusion matrix, precision/recall/F1 per class
+│   ├── tests/               # Smoke tests + numerical gradient check (run in CI)
 │   └── utils/
 │       └── epub2txt.py      # Convert .epub → .txt (stdlib only)
 ├── notes/
-│   ├── learning-plan.md          # Full learning curriculum (EN)
-│   ├── plan-nauki.md             # Full learning curriculum (PL)
+│   ├── learning-plan.md          # Full learning curriculum
 │   ├── stage-0-preprocess.md     # Preprocessing design + train/test split
 │   ├── stage-0-bigram-baseline.md # Theory + implementation reference
-│   └── stage-0-results.md        # Baseline results: confusion matrix, F1 per class
+│   ├── stage-0-results.md        # Baseline results: confusion matrix, F1 per class
+│   └── stage-1-mlp.md            # MLP architecture, formulas, gradient check
+├── paper/                        # Academic write-up (WIP)
 ```
 
 Planned additions (per learning plan):
 
 ```
 src/
-├── baseline_ngram.m         # Stage 0: n-gram frequency baseline
-├── mlp_forward.m            # Stage 1: forward pass
-├── mlp_backward.m           # Stage 1: manual backprop
-├── learn.m                  # Training loop (mini-batch SGD / Adam)
 ├── check.m                  # Evaluation on test set
 ├── detect.m                 # Inference on arbitrary text
 └── evaluate.m               # Precision / Recall / F1 per class
@@ -158,32 +168,17 @@ HIDDEN LAYER (128 numbers)
 OUTPUT  [p_NONE, p_COMMA, p_PERIOD]
 ```
 
-~282,500 parameters. Full notes: `notes/stage-1-mlp.md`.
-
-### Stage 1 — MLP with Hand-Written Backprop *(planned)*
-
-**Architecture:**
-
-```
-input:  [w_{i-2}, w_{i-1}, w_i, w_{i+1}, w_{i+2}]   (5 word indices)
-  ↓ embedding lookup  E ∈ R^{V×d}
-  ↓ concat → x ∈ R^{5d}
-  ↓ W1 ∈ R^{h×5d}, b1,  ReLU
-  ↓ W2 ∈ R^{3×h},  b2,  softmax
-output: distribution over {NONE, COMMA, PERIOD}
-```
-
-Starting hyperparameters: `V=5000, d=50, h=128, k=2, batch=64, lr=0.01`.
+~282,500 parameters. Starting hyperparameters: `V=5000, d=50, h=128, k=2, batch=64, lr=0.01`. Full notes: `notes/stage-1-mlp.md`.
 
 Key implementation steps:
 1. Build vocabulary with `<UNK>` and `<PAD>`.
 2. Forward pass with activation cache.
 3. Weighted cross-entropy loss (class weights = inverse frequency).
 4. Backward pass — all gradients derived by hand, including embedding scatter-add.
-5. Gradient check: numerical vs analytic difference < 1e-6.
+5. Gradient check: numerical vs analytic relative error < 1e-5.
 6. Xavier/He weight initialisation.
 7. SGD with momentum → Adam; observe the difference empirically.
-8. Training loop with early stopping; save `Theta1.mat`, `Theta2.mat`, `E.mat`.
+8. Training loop (`src/train.m`) with early stopping; save `Theta1.mat`, `Theta2.mat`, `E.mat`.
 
 Math to derive (in `notes/`): softmax Jacobian, softmax + CE simplification to `p − y`, ReLU gradient, embedding gradient (scatter-add), full chain-rule graph.
 
@@ -226,7 +221,7 @@ All stages are evaluated on the same held-out test set. Reported metrics:
 
 | Pitfall | Mitigation |
 |---------|------------|
-| NONE dominates (~85%) | Weighted cross-entropy — mandatory |
+| NONE dominates (80.6% of train tokens) | Weighted cross-entropy — mandatory |
 | Train/test phrase leak | Split by document, not by sentence |
 | Off-by-one at document boundary | Use `<PAD>` tokens or drop boundary windows |
 | Dead ReLU units | Xavier/He init, not `N(0,1)` |

@@ -1,6 +1,6 @@
 # Stage 1 — MLP with Manual Backprop
 
-See also: [learning-plan.md](learning-plan.md)
+See also: [learning-plan.md](learning-plan.md) · paper methodology §4: [`../paper/paper.md`](../paper/paper.md)
 
 ## Goal
 
@@ -76,16 +76,18 @@ OUTPUT (3 probabilities)
 | Embedding gradient | scatter-add: `dE(idx,:) += δ_embed` for each of 5 indices |
 | He init | `W = randn(out, in) * sqrt(2/in)` |
 
+> ⚠ **Recheck the ReLU gradient row:** what shape does `(W2' * δ2') .* (s1 > 0)'` actually produce, and what shape does the backward pass below declare for δ1? The two disagree — rederive before implementing.
+
 ---
 
 ## Why Weighted Loss
 
-Label distribution in training set:
-- NONE ≈ 80%
-- COMMA ≈ 12%
-- PERIOD ≈ 7%
+Label distribution in training set (1,067,705 tokens):
+- NONE = 80.58%
+- COMMA = 12.14%
+- PERIOD = 7.29%
 
-Without weights, the network learns to always predict NONE (~80% accuracy, Macro-F1 ≈ 0.33). Class weights = `total_N / (3 * count_per_class)` — rare classes get higher weight, forcing the network to pay attention to them.
+Without weights, the network learns to always predict NONE (~80.6% accuracy, Macro-F1 ≈ 0.33). Class weights = `total_N / (3 * count_per_class)` — rare classes get higher weight, forcing the network to pay attention to them.
 
 ---
 
@@ -114,6 +116,8 @@ db1       128 × 1   sum(δ1, 1)'
 dE        5000 × 50 scatter-add from δ1 split into 5 blocks of d columns
 ```
 
+> ⚠ **Recheck the dE row:** δ1 is N×128 — it cannot split into 5 blocks of 50 columns. A step is missing between δ1 and the embedding concat. What carries the gradient from the hidden layer back to the 250-dim input x_embed? Derive it before implementing.
+
 ---
 
 ## Gradient Check
@@ -138,11 +142,13 @@ Do not start training until this passes.
 | `src/mlp_forward.m` | Forward pass, returns probs + cache |
 | `src/mlp_loss.m` | Weighted CE loss + δ2 |
 | `src/mlp_backward.m` | All gradients |
-| `src/grad_check.m` | Numerical gradient verification |
-| `src/learn.m` | Mini-batch SGD training loop |
-| `src/check.m` | Load weights, evaluate Macro-F1 on test |
+| `src/tests/test_grad_check.m` | Numerical gradient verification |
+| `src/train.m` | Mini-batch SGD training loop (WIP) |
+| `src/check.m` | (planned) Load weights, evaluate Macro-F1 on test |
 
 Reused from Stage 0: `src/lib/metrics.m`, `data/processed/train.mat`, `test.mat`, `vocab.mat`.
+
+**Open item:** early stopping needs a validation set — none exists yet (current split is 90/10 train/test). Carve it out of the train documents before training; the test set stays untouched so the Stage 0 baseline numbers remain valid.
 
 ---
 

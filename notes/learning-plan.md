@@ -2,6 +2,8 @@
 
 Educational project. Goal: understand how to build a sequential classifier from scratch, deriving the math and implementing backprop manually on matrices.
 
+A formal write-up of this project lives in [`../paper/paper.md`](../paper/paper.md) (work in progress).
+
 ---
 
 ## Reference Points from Your Experience
@@ -11,13 +13,12 @@ Throughout this plan I deliberately refer to things you have already done — so
 | Source | What carries over |
 |--------|-------------------|
 | **`ml-applications`** (your atlas repo) | Most of the theoretical notes are already there: cost function, gradient descent, feature scaling, λ-regularisation, bias/variance, sigmoid, one-vs-all, backprop. In `notes/` — link rather than rewrite. Only add the deltas for softmax+CE and embeddings. |
-| **`vehicles-counter`** | **Direct structural template.** Octave, single hidden layer network, backprop, weights saved as `Theta1.mat`/`Theta2.mat`, `learn.m`/`check.m`/`detect.m` split, `bin/conf/doc/lib/datasource` hierarchy. "Intentionally written in pure Matlab language, using only elementary arithmetic operations" — identical philosophy continued here. |
-| **`traffic-light-detection`** | Same skeleton as vehicles-counter but with logistic regression + gradient descent. Reference for how you previously stepped from a simpler model (log-reg) to a more complex one (NN). Here you make the analogous jump: n-gram baseline → MLP. |
+| **`traffic-light-detection`** | Octave skeleton with logistic regression + gradient descent. Reference for how you previously stepped from a simpler model (log-reg) to a more complex one (NN). Here you make the analogous jump: n-gram baseline → MLP. |
 | **`car-price-prediction`** | Feature engineering on real-world data (otomoto scraping). Your experience with "dirty" data will be useful when preprocessing Wolne Lektury. |
 | **`ml-login`** | "No external ML libraries, all algorithms written using only basic math formulas" — same philosophy kept here. Also shows you can build ML as a separate service with a clean interface (train/predict split) — an architectural pattern worth keeping even in Octave. |
 | **Andrew Ng ML (Coursera)** | Especially **ex3** (forward pass, multi-class classification) and **ex4** (`nnCostFunction.m`, `sigmoidGradient.m`, `randInitializeWeights.m`, `checkNNGradients.m`). 80% of the backprop from ex4 is reusable — differences are listed at each step below. |
 
-**Key conceptual difference** vs ex4/vehicles-counter/traffic-light-detection: there the **input was pixels** (continuous values in `[0,1]`), here the **input is word indices** (discrete values in `[1, V]`). This requires one additional layer — **embedding lookup** — which none of your previous projects had. This is the only new implementation concept to master. Everything else (cost, backprop, gradient check, optimizer) is a continuation of what you have done before.
+**Key conceptual difference** vs the earlier Octave projects (ex4, traffic-light-detection): there the **input was pixels** (continuous values in `[0,1]`), here the **input is word indices** (discrete values in `[1, V]`). This requires one additional layer — **embedding lookup** — which none of your previous projects had. This is the only new implementation concept to master. Everything else (cost, backprop, gradient check, optimizer) is a continuation of what you have done before.
 
 **Second difference** vs ex4: there the output layer uses sigmoid + K output units (one-hot via one-vs-all). Here we use **softmax** + cross-entropy — the only mathematical change that requires its own derivation (the rest of the gradients are identical).
 
@@ -34,13 +35,13 @@ Throughout this plan I deliberately refer to things you have already done — so
 | Representation | Embeddings over top-N words + `<UNK>` | Lookup = row indexing into a matrix |
 | Context | Window ±k words | Start with k=2, tune later |
 | Tokenisation | Whitespace + lowercase | Keep diacritics |
-| Split | 80/10/10 by documents | Avoid phrase leakage |
+| Split | 90/10 train/test by documents | Avoid phrase leakage; validation set to be carved from train documents before Stage 1 training (test stays untouched) |
 
 ---
 
 ## Repository Structure
 
-Following your convention from `vehicles-counter` and `traffic-light-detection` (`learn.m`/`check.m`/`detect.m` + `bin/conf/doc/lib/datasource`) — extended for NLP:
+Train/check/detect script split plus a `lib`/`config` hierarchy — extended for NLP:
 
 ```
 polish-punctuation-restorer/
@@ -52,12 +53,12 @@ polish-punctuation-restorer/
 │   ├── baseline_ngram.m     # Stage 0
 │   ├── mlp_forward.m        # Stage 1: forward pass
 │   ├── mlp_backward.m       # Stage 1: gradients by hand
-│   ├── learn.m              # training loop (equivalent of vehicles-counter/learn.m)
-│   ├── check.m              # evaluation on test set (equivalent of check.m)
-│   ├── detect.m             # inference on arbitrary text (equivalent of detect.m)
+│   ├── train.m              # training loop
+│   ├── check.m              # evaluation on test set
+│   ├── detect.m             # inference on arbitrary text
 │   └── evaluate.m           # precision/recall/F1 per class
-├── Theta1.mat, Theta2.mat   # saved weights — 1:1 convention from vehicles-counter
-├── E.mat                    # embedding matrix (new vs vehicles-counter)
+├── Theta1.mat, Theta2.mat   # saved weights
+├── E.mat                    # embedding matrix (new — earlier projects had no embeddings)
 ├── notes/                   # math derivations
 └── README.md
 ```
@@ -73,8 +74,8 @@ polish-punctuation-restorer/
    - read file, lowercase, remove everything except `[a-ząćęłńóśźż\s,.]`
    - iterate over tokens, build list of `(word, label)` where label = punctuation immediately after the word (or NONE)
    - save as `.mat` (matrices are easier in Octave than structs)
-3. `baseline_ngram.m`: call `build_vocab` to map `words` → integer indices, then for each pair `(word_indices(i), word_indices(i+1))` count `count[label | idx1, idx2]` in a numeric matrix `zeros(N+1, N+1, 3)`. Prediction = argmax with Laplace smoothing. Analogous to "guess the median price on otomoto" from `car-price-prediction` — a no-model baseline for comparison.
-5. Evaluate on test set: **report F1 per class**, not accuracy.
+3. `baseline_ngram.m`: call `build_vocab` to map `words` → integer indices, then for each pair `(word_indices(i), word_indices(i+1))` count `count[label | idx1, idx2]` in a numeric matrix `zeros(N+1, N+1, 3)`. Prediction = argmax over counts (Laplace smoothing optional — it does not change the argmax). Analogous to "guess the median price on otomoto" from `car-price-prediction` — a no-model baseline for comparison.
+4. Evaluate on test set: **report F1 per class**, not accuracy.
 
 **What you will learn:** working with a corpus, Polish preprocessing pitfalls, awareness of class imbalance (expect ~85% NONE), difference between accuracy and F1.
 
@@ -104,14 +105,14 @@ Starting hyperparameters: `V=5000, d=50, h=128, k=2, batch=64, lr=0.01`.
 
 ### Implementation Steps
 
-1. **Vocabulary** (`vocab.m`): top-V words + `<UNK>` + `<PAD>` (for document boundaries). New vs vehicles-counter — there was no vocabulary there because the input was pixels.
+1. **Vocabulary** (`vocab.m`): top-V words + `<UNK>` + `<PAD>` (for document boundaries). New ingredient — the earlier pixel-input projects needed no vocabulary.
 2. **Forward** (`mlp_forward.m`): returns `y_hat` and activation cache for backprop. Analogous to `predict.m` from Andrew Ng ex3 — same pattern `a1 → z2 → a2 → z3 → a3`, just with embedding lookup before `a1` and softmax instead of sigmoid at the end.
 3. **Loss**: weighted cross-entropy. Class weights = inverse of class frequency (otherwise the model learns to always predict NONE). Compare with `nnCostFunction.m` from ex4 — there it was sum-of-log-losses for sigmoid outputs; here one summation over classes with softmax.
-4. **Backward** (`mlp_backward.m`): derive and implement the gradient for every parameter. Key point: the gradient of softmax+CE comes out as `(y_hat - y_true)` — derive this yourself, do not copy it. In ex4/`vehicles-counter` you have exactly the same formula as `δ3 = a3 - y` (there for sigmoid+CE; that it comes out identically for softmax+CE is exactly what is worth seeing yourself). Then `δ2 = (Θ2' * δ3) .* ReLU'(z2)` — same skeleton as ex4, just with ReLU instead of sigmoidGradient.
-5. **Gradient check**: compare analytical gradient against numerical `(L(θ+ε) - L(θ-ε)) / 2ε`. Do not proceed without passing this. Relative difference < 1e-6 on a sample of parameters. Adapt `checkNNGradients.m` from ex4 — the structure is 1:1, you only change the cost function being called and add a check for the embedding gradient.
+4. **Backward** (`mlp_backward.m`): derive and implement the gradient for every parameter. Key point: the gradient of softmax+CE comes out as `(y_hat - y_true)` — derive this yourself, do not copy it. In ex4 you have exactly the same formula as `δ3 = a3 - y` (there for sigmoid+CE; that it comes out identically for softmax+CE is exactly what is worth seeing yourself). Then `δ2 = (Θ2' * δ3) .* ReLU'(z2)` — same skeleton as ex4, just with ReLU instead of sigmoidGradient.
+5. **Gradient check**: compare analytical gradient against numerical `(L(θ+ε) - L(θ-ε)) / 2ε`. Do not proceed without passing this. Relative difference < 1e-5 on a sample of parameters. Adapt `checkNNGradients.m` from ex4 — the structure is 1:1, you only change the cost function being called and add a check for the embedding gradient.
 6. **Weight initialisation**: Xavier/He instead of `randInitializeWeights.m` from ex4 (uniform `ε_init`). With ReLU this matters — justification in `notes/`.
-7. **Optimizer**: first SGD with momentum, then Adam. Observe the difference in loss curves empirically. In `vehicles-counter` you used `fmincg` (advanced optimizer from ex4) — here we deliberately step back to SGD to see the learning mechanics, then step forward to Adam.
-8. **Training loop** (`learn.m`): mini-batches, log train/val loss every epoch, early stopping. Save weights to `Theta1.mat`, `Theta2.mat`, `E.mat` — convention from vehicles-counter.
+7. **Optimizer**: first SGD with momentum, then Adam. Observe the difference in loss curves empirically. Previously you used `fmincg` (the advanced optimizer from ex4) — here we deliberately step back to SGD to see the learning mechanics, then step forward to Adam.
+8. **Training loop** (`train.m`): mini-batches, log train/val loss every epoch, early stopping. Requires carving a validation set out of the train documents first (the current split is 90/10 train/test with no val — keep test untouched so baseline numbers stay valid). Save weights to `Theta1.mat`, `Theta2.mat`, `E.mat`.
 9. **Evaluation** (`check.m`, `evaluate.m`): same method as in Stage 0. Compare Macro-F1 directly.
 
 ### Math to Derive Yourself (in `notes/`)
@@ -172,6 +173,6 @@ Decision after Stage 1, based on what pulls you in.
 
 ## Definition of Done
 
-**Stage 0:** ✓ Done. Macro-F1 = 0.506. Results in `notes/stage-0-results.md`.
+**Stage 0:** ✓ Done. Macro-F1 = 0.511 (V=5000). Results in `notes/stage-0-results.md`.
 
 **Stage 1:** gradient check passes, network trains stably, Macro-F1 > baseline Macro-F1 by at least 10 percentage points, derivations in `notes/` complete.
