@@ -21,6 +21,23 @@ For reference: GPT-2 small has 117M parameters — roughly 400× more.
 
 ---
 
+## Contents
+
+- [Paper](#paper)
+- [Progress](#progress)
+- [Current State](#current-state)
+- [Project Structure](#project-structure)
+- [Getting Started](#getting-started)
+- [Learning Roadmap](#learning-roadmap)
+- [Evaluation](#evaluation)
+- [Known Pitfalls](#known-pitfalls)
+- [Data Sources](#data-sources)
+- [For AI Agents](#for-ai-agents)
+- [AI Assistance & Methodology](#ai-assistance--methodology)
+- [Philosophy](#philosophy)
+
+---
+
 ## Paper
 
 A standards-conforming academic write-up of this project — goal, methodology, results, and conclusions — lives in [`paper/paper.md`](paper/paper.md) (work in progress; build instructions in [`paper/README.md`](paper/README.md)).
