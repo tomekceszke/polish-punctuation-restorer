@@ -247,6 +247,26 @@ All stages are evaluated on the same held-out test set. Reported metrics:
 
 ---
 
+## AI Assistance & Methodology
+
+This project is built with AI assistance (Claude, via Claude Code), and the way that help works is deliberately constrained. The point of the project is to *understand* how a neural sequence classifier works — so the AI is never allowed to do the understanding for me.
+
+These are hard rules, and they are never broken:
+
+- **Socratic only** — the AI asks guiding questions and gives pointers, not answers. It nudges; it does not solve.
+- **No ready-to-paste code** — the AI never writes the implementation. I write every line myself.
+- **I derive the math** — every formula, every gradient, every design decision is worked out by hand. The AI explains concepts and checks my reasoning, but the derivation is mine.
+
+The goal is understanding, not throughput. Handing over code would defeat the entire purpose of the exercise — see [Philosophy](#philosophy) below.
+
+**Illustrative exchange** (one Socratic turn — note: no code is given):
+
+> **Me:** How do I accumulate the embedding gradient when a word appears at more than one window position?
+>
+> **AI:** Good — you've spotted the case that trips most people up. Start with one question: if the same row of `E` is touched by two positions, and you *assign* its gradient instead of *adding*, what happens to the first contribution? Once you've answered that, what Octave operator gives you the behaviour you actually want?
+
+---
+
 ## Philosophy
 
 *"Intentionally written in pure Octave, using only elementary arithmetic operations."*

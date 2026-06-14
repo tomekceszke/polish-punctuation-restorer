@@ -370,7 +370,28 @@ hyperparameters, and confirm the macro-F1 target of > 0.611.
 
 ---
 
-## 8. Conclusion
+## 8. Use of AI Assistance & Methodology
+
+This project was developed with the assistance of an AI system (Claude, via Claude
+Code). In the interest of full disclosure, we state precisely what that assistance
+did and — more importantly — did not include. The assistance was deliberately
+constrained to a **Socratic** role: conceptual explanation, guiding questions, and
+review of hand-derived mathematics. It **excluded the generation of implementation
+code**. Every line of Octave was written by the author, and every result in §4.5 —
+the softmax + cross-entropy, ReLU, and embedding scatter-add gradients — was
+derived by hand, with the AI offering questions and sanity checks rather than
+solutions. The from-scratch implementation and the hand-derivation of all gradients
+(a core contribution, §1.3) are therefore the author's own work.
+
+This constraint is a deliberate methodological choice in service of the project's
+pedagogical goal (§1.1): the value of the work lies in the derivation, not in the
+speed of producing code, and delegating either would defeat its purpose. A concrete
+example of the interaction style is given in the repository README (see
+[`../README.md`](../README.md)).
+
+---
+
+## 9. Conclusion
 
 PPR is an educational project whose value lies in the *derivation*, not the score. With Stage 0
 complete, we have an honest baseline (macro-F1 = 0.511) and a clean, leakage-free evaluation
