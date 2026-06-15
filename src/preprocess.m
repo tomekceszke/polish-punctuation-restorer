@@ -14,6 +14,12 @@ printf('Done. %d words labeled.\n\n', length(train_words));
 save '../data/processed/train.mat' train_words train_labels;
 printf('Data saved.\n\n');
 
+printf('Processing validating data...\n\n');
+[val_words, val_labels] = process(C_VAL_BOOKS);
+printf('Done. %d words labeled.\n\n', length(val_words));
+save '../data/processed/val.mat' val_words val_labels;
+printf('Data saved.\n\n');
+
 printf('Processing testing data...\n\n');
 [test_words, test_labels] = process(C_TEST_BOOKS);
 printf('Done. %d words labeled.\n\n', length(test_words));
