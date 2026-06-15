@@ -92,18 +92,18 @@ rel_err_b2 = abs(db2(1) - grad_num)/(abs(db2(1)) + abs(grad_num));
 assert(rel_err_b2 < eps);
 
 % E
-orig = E(1, 1);
-E(1, 1) = orig + eps;
+orig = E(X_idx(1,1), 1);
+E(X_idx(1,1), 1) = orig + eps;
 probs_plus = mlp_forward(X_idx, E, W1, b1, W2, b2, k);
 L_plus = mlp_loss(probs_plus, y);
 
-E(1, 1) = orig - eps;
+E(X_idx(1,1), 1) = orig - eps;
 probs_minus = mlp_forward(X_idx, E, W1, b1, W2, b2, k);
 L_minus = mlp_loss(probs_minus, y);
 
-E(1, 1) = orig;
+E(X_idx(1,1), 1) = orig;
 grad_num = (L_plus - L_minus) / (2 * eps);
 
 % relative error = |analytic - numerical| / (|analytic| + |numerical|)
-rel_err_E = abs(dE(1, 1) - grad_num)/(abs(dE(1, 1)) + abs(grad_num));
+rel_err_E = abs(dE(X_idx(1,1), 1) - grad_num)/(abs(dE(X_idx(1,1), 1)) + abs(grad_num));
 assert(rel_err_E < eps);

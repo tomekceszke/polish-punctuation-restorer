@@ -132,10 +132,7 @@ Use tiny model for speed: V=20, d=3, h=4, batch=5. Check W2, W1, b2, b1, and 10 
 
 Do not start training until this passes.
 
-> ⚠ **Known issue (2026-06-10): the check is flaky.** `test_grad_check.m` fails roughly 2 in 5 local runs, always on `rel_err_E` (the embedding gradient), never on W or b. CI has passed by luck. Two leads to investigate before training:
->
-> 1. The test sets no random seed — every run draws fresh `randn * 0.01` embeddings and a fresh sample of E entries to check.
-> 2. Look at the relative-error formula and ask: what happens to `|analytic − numerical| / (|analytic| + |numerical|)` when both terms are nearly zero? With batch=5 and V=20, which entries of dE are exactly that small — and can a randomly sampled entry land on one?
+> **Fixed (2026-06-15).** Was flaky because the test always probed `E(1,1)` — word index 1 may not appear in a random `X_idx`, giving `dE(1,1)=0` and numerical grad≈0, so `0/0=NaN` → assert fails. Fixed by probing `E(X_idx(1,1), 1)` — a row guaranteed present in the batch.
 
 ---
 
