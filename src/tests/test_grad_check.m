@@ -27,11 +27,11 @@ eps = 1e-5;
 orig = W2(1, 1);
 W2(1, 1) = orig + eps;
 probs_plus = mlp_forward(X_idx, E, W1, b1, W2, b2, k);
-L_plus = mlp_loss(probs_plus, y);
+L_plus = mlp_loss(probs_plus, y, w);
 
 W2(1, 1) = orig - eps;
 probs_minus = mlp_forward(X_idx, E, W1, b1, W2, b2, k);
-L_minus = mlp_loss(probs_minus, y);
+L_minus = mlp_loss(probs_minus, y, w);
 
 W2(1, 1) = orig;
 grad_num = (L_plus - L_minus) / (2 * eps);
@@ -44,11 +44,11 @@ assert(rel_err_W2 < eps);
 orig = W1(1, 1);
 W1(1, 1) = orig + eps;
 probs_plus = mlp_forward(X_idx, E, W1, b1, W2, b2, k);
-L_plus = mlp_loss(probs_plus, y);
+L_plus = mlp_loss(probs_plus, y, w);
 
 W1(1, 1) = orig - eps;
 probs_minus = mlp_forward(X_idx, E, W1, b1, W2, b2, k);
-L_minus = mlp_loss(probs_minus, y);
+L_minus = mlp_loss(probs_minus, y, w);
 
 W1(1, 1) = orig;
 grad_num = (L_plus - L_minus) / (2 * eps);
@@ -61,11 +61,11 @@ assert(rel_err_W1 < eps);
 orig = b1(1);
 b1(1) = orig + eps;
 probs_plus = mlp_forward(X_idx, E, W1, b1, W2, b2, k);
-L_plus = mlp_loss(probs_plus, y);
+L_plus = mlp_loss(probs_plus, y, w);
 
 b1(1) = orig - eps;
 probs_minus = mlp_forward(X_idx, E, W1, b1, W2, b2, k);
-L_minus = mlp_loss(probs_minus, y);
+L_minus = mlp_loss(probs_minus, y, w);
 
 b1(1) = orig;
 grad_num = (L_plus - L_minus) / (2 * eps);
@@ -78,11 +78,11 @@ assert(rel_err_b1 < eps);
 orig = b2(1);
 b2(1) = orig + eps;
 probs_plus = mlp_forward(X_idx, E, W1, b1, W2, b2, k);
-L_plus = mlp_loss(probs_plus, y);
+L_plus = mlp_loss(probs_plus, y, w);
 
 b2(1) = orig - eps;
 probs_minus = mlp_forward(X_idx, E, W1, b1, W2, b2, k);
-L_minus = mlp_loss(probs_minus, y);
+L_minus = mlp_loss(probs_minus, y, w);
 
 b2(1) = orig;
 grad_num = (L_plus - L_minus) / (2 * eps);
@@ -95,11 +95,11 @@ assert(rel_err_b2 < eps);
 orig = E(X_idx(1,1), 1);
 E(X_idx(1,1), 1) = orig + eps;
 probs_plus = mlp_forward(X_idx, E, W1, b1, W2, b2, k);
-L_plus = mlp_loss(probs_plus, y);
+L_plus = mlp_loss(probs_plus, y, w);
 
 E(X_idx(1,1), 1) = orig - eps;
 probs_minus = mlp_forward(X_idx, E, W1, b1, W2, b2, k);
-L_minus = mlp_loss(probs_minus, y);
+L_minus = mlp_loss(probs_minus, y, w);
 
 E(X_idx(1,1), 1) = orig;
 grad_num = (L_plus - L_minus) / (2 * eps);
