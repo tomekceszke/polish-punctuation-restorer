@@ -30,3 +30,4 @@ C_TEST_BOOKS = {
   C_LR = 0.01;       % learning rate
   C_BATCH = 64;      % batch size
   C_EPOCHS = 10;
+  C_PATIENCE = 3;
