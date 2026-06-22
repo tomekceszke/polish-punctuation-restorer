@@ -52,6 +52,7 @@ N_val = rows(X_idx_val);
 [E, W1, b1, W2, b2] = mlp_init(length(vocab)+1, C_D, C_H, C_K, numfields(C_LABELS));
 best_val = Inf;
 best_counter = 0;
+best_epoch = 0;
 
 %   weights
 class_counts = accumarray(y, 1); % [3x1]
@@ -107,19 +108,26 @@ for epoch = 1:C_EPOCHS
     if loss_val < best_val
         best_counter = 0;
         best_val = loss_val;
+        best_epoch = epoch;
         best_W1 = W1;
         best_b1 = b1;
         best_W2 = W2;
         best_b2 = b2;
         best_E = E;
+        printf('  -> new best val loss, model saved\n');
     else
         best_counter++;
+        printf('  -> no improvement (%d/%d), best = %.4f @ epoch %d\n', ...
+               best_counter, C_PATIENCE, best_val, best_epoch);
     end
     if best_counter >= C_PATIENCE
+        printf('Early stopping at epoch %d. Best val loss = %.4f @ epoch %d\n', ...
+               epoch, best_val, best_epoch);
         break;
     end
 
 end
+printf('Saving best model (val loss = %.4f @ epoch %d)...\n', best_val, best_epoch);
 save '../data/processed/model.mat' best_W1 best_b1 best_W2 best_b2 best_E;
 
 
