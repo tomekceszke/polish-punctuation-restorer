@@ -50,7 +50,7 @@ N_val = rows(X_idx_val);
 
 %   INITIALIZATION
 [E, W1, b1, W2, b2] = mlp_init(length(vocab)+1, C_D, C_H, C_K, numfields(C_LABELS));
-best_val = Inf;
+best_f1 = -Inf;
 best_counter = 0;
 best_epoch = 0;
 
@@ -98,36 +98,40 @@ for epoch = 1:C_EPOCHS
     %   VALIDATION
     % forward
     probs_val = mlp_forward(X_idx_val, E, W1, b1, W2, b2, C_K);
+    % f1
+    [~, y_pred] = max(probs_val, [], 2);
+    [~, ~, ~, f1] = metrics(y_val, y_pred);
+    macro_f1_val = mean(f1);
     % loss
     [loss_val] = mlp_loss(probs_val, y_val, w_val);
-    printf('Epoch %2d/%d  train loss = %.4f  val loss = %.4f  (%.1fs, %.2f ms/batch)\n', ...
-           epoch, C_EPOCHS, epoch_loss / n_batches, loss_val, ...
+    printf('Epoch %2d/%d  train loss = %.4f  val loss = %.4f  val F1 = %.4f  (%.1fs, %.2f ms/batch)\n', ...
+           epoch, C_EPOCHS, epoch_loss / n_batches, loss_val, macro_f1_val, ...
            epoch_time, 1000 * epoch_time / n_batches);
 
-    %   EVALUATION
-    if loss_val < best_val
+    %   EVALUATION (early stopping on Macro-F1 — the metric we are judged on)
+    if macro_f1_val > best_f1
         best_counter = 0;
-        best_val = loss_val;
+        best_f1 = macro_f1_val;
         best_epoch = epoch;
         best_W1 = W1;
         best_b1 = b1;
         best_W2 = W2;
         best_b2 = b2;
         best_E = E;
-        printf('  -> new best val loss, model saved\n');
+        printf('  -> new best val F1, model saved\n');
     else
         best_counter++;
-        printf('  -> no improvement (%d/%d), best = %.4f @ epoch %d\n', ...
-               best_counter, C_PATIENCE, best_val, best_epoch);
+        printf('  -> no improvement (%d/%d), best F1 = %.4f @ epoch %d\n', ...
+               best_counter, C_PATIENCE, best_f1, best_epoch);
     end
     if best_counter >= C_PATIENCE
-        printf('Early stopping at epoch %d. Best val loss = %.4f @ epoch %d\n', ...
-               epoch, best_val, best_epoch);
+        printf('Early stopping at epoch %d. Best val F1 = %.4f @ epoch %d\n', ...
+               epoch, best_f1, best_epoch);
         break;
     end
 
 end
-printf('Saving best model (val loss = %.4f @ epoch %d)...\n', best_val, best_epoch);
+printf('Saving best model (val F1 = %.4f @ epoch %d)...\n', best_f1, best_epoch);
 save '../data/processed/model.mat' best_W1 best_b1 best_W2 best_b2 best_E;
 
 
