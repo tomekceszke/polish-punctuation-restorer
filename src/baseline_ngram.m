@@ -10,21 +10,20 @@ addpath('lib');
 
 printf('Loading data...\n');
 load '../data/processed/train.mat'
-printf('Loaded training %d tokens and %d labels\n', length(train_words), length(train_labels));
+load '../data/processed/val.mat'
+% baseline has no hyperparameters / early stopping, so the val split is irrelevant
+% to it; recombine train+val to train on the full corpus train set (see ef64e8f)
+train_words = [train_words(:); val_words(:)];
+train_labels = [train_labels(:); val_labels(:)];
+printf('Loaded training %d tokens and %d labels (train+val)\n', length(train_words), length(train_labels));
 load '../data/processed/test.mat'
 printf('Loaded testing %d tokens and %d labels\n', length(test_words), length(test_labels));
 
-% vocab
-printf('Loading vocabulary...\n');
-
-if ~exist('../data/processed/vocab.mat', 'file')
-    vocab = build_vocab(train_words, C_V);
-    save '../data/processed/vocab.mat' vocab;
-else
-    load '../data/processed/vocab.mat';
-end
-
-printf('Loaded %d top unique words\n', length(vocab));
+% vocab: built from the full train set in memory (top C_V), not the committed
+% vocab.mat (which the MLP regenerated from the reduced train split)
+printf('Building vocabulary from full train...\n');
+vocab = build_vocab(train_words, C_V);
+printf('Built %d top unique words\n', length(vocab));
 
 % indices
 printf('Getting training/testing word indices...\n');
@@ -58,7 +57,8 @@ for i = 1:length(train_word_indices) - 1
     [~, idx] = max(counter(idx1, idx2, :));
     y_pred_trained(i) = idx;
 end
-[~, ~, ~, f1_train] = metrics(train_labels, y_pred_trained);
+% last token has no successor → no bigram prediction; trim both to the predicted range
+[~, ~, ~, f1_train] = metrics(train_labels(1:end-1), y_pred_trained(1:end-1));
 
 % predict most frequent label for each bigram on tested data
 y_pred_tested = zeros(length(test_word_indices), 1);
@@ -71,7 +71,7 @@ for i = 1:length(test_word_indices) - 1
     y_pred_tested(i) = idx;
 end
 
-[confusion_matrix_test, ~, ~, f1_test] = metrics(test_labels, y_pred_tested);
+[confusion_matrix_test, ~, ~, f1_test] = metrics(test_labels(1:end-1), y_pred_tested(1:end-1));
 
 labels = fieldnames(C_LABELS);
 
