@@ -14,6 +14,6 @@ k = 2;
 [probs, cache] = mlp_forward(X_idx, E, W1, b1, W2, b2, k);
 
 assert(size(probs),[5000,3]);
-% softmax smoke assertions:
-assert(all(probs(:) > 0));
+% softmax smoke assertions (probs in [0,1]; a logit can underflow to exactly 0):
+assert(all(probs(:) >= 0));
 assert(all(abs(sum(probs, 2) - 1) < 1e-9));
