@@ -6,7 +6,7 @@ function [confusion_matrix, precision, recall, f1] = metrics(y, y_pred)
     n_classes = numel(unique(y));
 
     confusion_matrix = zeros(n_classes);
-    for sample_idx = 1:length(y) - 1
+    for sample_idx = 1:length(y)
         act = y(sample_idx);
         pred = y_pred(sample_idx);
         confusion_matrix(act, pred) += 1;
