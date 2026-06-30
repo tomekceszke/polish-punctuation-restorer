@@ -26,8 +26,9 @@ C_TEST_BOOKS = {
   C_V = 5000;        % vocab size
   C_D = 50;          % embedding dim
   C_H = 128;         % hidden units
-  C_K = 2;           % context radius
-  C_LR = 0.01;       % learning rate
+  C_K = 3;           % context radius
+  C_LR = 0.005;      % learning rate
   C_BATCH = 64;      % batch size
-  C_EPOCHS = 10;
-  C_PATIENCE = 3;
+  C_EPOCHS = 30;
+  C_PATIENCE = 5;
+  C_ALPHA = 0.5;     % class-weight tempering: w ∝ (1/count)^alpha (1=full inv-freq, 0=uniform)

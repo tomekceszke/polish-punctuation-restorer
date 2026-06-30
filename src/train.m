@@ -56,7 +56,7 @@ best_epoch = 0;
 
 %   weights
 class_counts = accumarray(y, 1); % [3x1]
-class_w = N ./ (numfields(C_LABELS) * class_counts); % [3x1]
+class_w = (N ./ (numfields(C_LABELS) * class_counts)) .^ C_ALPHA; % [3x1]
 w_all = class_w(y); % [Nx1] per-sample weight: each class index in y mapped to its class weight
 w_val = class_w(y_val); % validation weights, built on the same class_w
 

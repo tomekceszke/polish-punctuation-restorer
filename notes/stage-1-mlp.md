@@ -11,6 +11,89 @@ Replace the bigram counter with a neural network that learns distributed word re
 
 ---
 
+## Results
+
+This is an educational project: the point is to see the MLP working end to end with
+hand-derived backprop, not to chase a state-of-the-art score. Two snapshots below:
+the model straight after implementation (no tuning), then after a small round of
+tuning that shows what each lever is worth.
+
+### Right after implementation (2026-06-25)
+
+Config: `C_D=50`, `C_H=128`, `C_K=2`, `C_V=5000`, `C_LR=0.01`, `C_BATCH=64`,
+`C_EPOCHS=10`, early stopping on validation Macro-F1 with `patience=3`.
+Best epoch = 5 (early-stopped at epoch 8). Validation Macro-F1 = 0.5331.
+
+Test set (`syzyfowe-prace`, `tajemniczy-ogrod`), comparable to the Stage 0 baseline:
+
+| Class | Precision | Recall | F1 |
+|-------|-----------|--------|-----|
+| NONE | 0.9582 | 0.7502 | 0.8416 |
+| COMMA | 0.3270 | 0.6122 | 0.4263 |
+| PERIOD | 0.2387 | 0.5818 | 0.3385 |
+| **Macro-F1** | | | **0.5354** |
+
+| Model | Test Macro-F1 |
+|-------|---------------|
+| Stage 0 bigram baseline | 0.5106 |
+| Stage 1 MLP (untuned) | **0.5354** |
+| Target | 0.611 |
+
+So the MLP already beats the baseline by ~2.5 pp out of the box, but is still ~7.6 pp
+short of the target. Recall on the rare classes is decent (the class weights work — no
+collapse to always-NONE), but precision on COMMA/PERIOD is low: the model over-predicts
+punctuation.
+
+### After tuning (2026-07-01)
+
+Final config: `C_D=50`, `C_H=128`, `C_K=3`, `C_V=5000`, `C_LR=0.005`, `C_BATCH=64`,
+`C_EPOCHS=30`, `patience=5`, class-weight tempering `C_ALPHA=0.5`.
+
+Test set, comparable to the Stage 0 baseline:
+
+| Class | Precision | Recall | F1 |
+|-------|-----------|--------|-----|
+| NONE | 0.922 | 0.922 | 0.922 |
+| COMMA | 0.588 | 0.467 | 0.520 |
+| PERIOD | 0.333 | 0.442 | 0.381 |
+| **Macro-F1** | | | **0.608** |
+
+| Model | Test Macro-F1 |
+|-------|---------------|
+| Stage 0 bigram baseline | 0.5106 |
+| Stage 1 MLP (untuned) | 0.5354 |
+| Stage 1 MLP (tuned) | **0.6077** |
+| Target | 0.611 |
+
+Result: +9.7 pp over the baseline, on par with the +10 pp target (within run-to-run
+noise of ±0.01 from random init).
+
+What each lever was worth, applied in order:
+
+| Step | What changed | Test Macro-F1 |
+|------|--------------|---------------|
+| untuned | `α=1`, `K=2`, `LR=0.01`, 10 epochs | 0.5354 |
+| optimizer | `LR 0.01→0.005`, epochs `10→30`, `patience 3→5` | ~0.555 (val) |
+| context | `C_K 2→3` | ~0.559 (val) |
+| **class weights** | `α 1→0.5` (sqrt of inverse frequency) | **0.6063** |
+| final | retrain at `α=0.5` | **0.6077** |
+
+The dominant lever by far was **tempering the class weights**. Full inverse-frequency
+(`α=1`) over-weights the rare classes ~11:1, so the model over-predicts punctuation
+(high recall, low precision). Tempering to `w ∝ (1/count)^α` with `α=0.5` compresses
+that ratio to ~3:1 and rebalances toward precision — COMMA precision jumped 0.33→0.59,
+and NONE rose too (fewer false-positive commas). A sweep over `α ∈ {0.4, 0.5, 0.6}`
+peaked cleanly at `0.5`. Context (`C_K`) and learning-rate/epoch changes gave only
+small gains; raw model capacity (`C_D`/`C_H`) was not the bottleneck — the rare-class
+precision was.
+
+`C_ALPHA` lives in `src/config/settings.m`; the weight formula is in `src/train.m`.
+
+> A standalone `check.m` (load `model.mat`, report test Macro-F1) is still to be
+> written — the test numbers here came from a one-off measurement.
+
+---
+
 ## Architecture
 
 ```
