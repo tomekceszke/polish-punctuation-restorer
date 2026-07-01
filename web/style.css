@@ -87,6 +87,27 @@ a { color: inherit; }
   overflow: hidden;
 }
 
+.hero-net {
+  position: absolute;
+  inset: 0;
+  left: 38%;
+  pointer-events: none;
+  user-select: none;
+  opacity: 0.35;
+}
+.hero-net svg { width: 100%; height: 100%; display: block; }
+.hero-net line {
+  stroke: var(--ink-soft);
+  stroke-width: 0.5;
+  opacity: 0.28;
+}
+.hero-net circle {
+  fill: none;
+  stroke: var(--ink-soft);
+  stroke-width: 1;
+  opacity: 0.55;
+}
+
 .hero-glyph {
   position: absolute;
   top: -6rem;
@@ -283,6 +304,22 @@ a { color: inherit; }
 }
 
 /* ===== Books ===== */
+.books-group-label {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: 0.82rem;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  margin: 0 0 1rem;
+}
+.books-group-test {
+  margin-top: 2.5rem;
+  padding-top: 1.75rem;
+  border-top: 1px dashed var(--line);
+  color: var(--accent);
+}
+
 .books-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(13rem, 1fr));
@@ -308,19 +345,6 @@ a { color: inherit; }
   line-height: 1.3;
 }
 .book-author { color: var(--ink-soft); font-size: 0.88rem; }
-
-.book-tag {
-  margin-top: 0.4rem;
-  align-self: flex-start;
-  font-size: 0.7rem;
-  font-weight: 600;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--accent);
-  background: var(--accent-soft);
-  border-radius: 6px;
-  padding: 0.15rem 0.5rem;
-}
 
 .books-credit { margin-top: 2rem; color: var(--ink-soft); font-size: 0.95rem; }
 .books-credit a { color: var(--accent); }
@@ -450,7 +474,14 @@ a { color: inherit; }
   color: var(--ink-soft);
   font-size: 0.95rem;
 }
-.footer-author { margin-top: 0.4rem; font-size: 0.88rem; }
+.footer-ai {
+  margin-top: 0.8rem;
+  font-size: 0.88rem;
+  max-width: 46rem;
+  padding-left: 1rem;
+  border-left: 2px solid var(--accent);
+}
+.footer-author { margin-top: 1.2rem; font-size: 0.88rem; }
 
 /* ===== Motion & small screens ===== */
 @media (prefers-reduced-motion: reduce) {
@@ -461,6 +492,7 @@ a { color: inherit; }
 @media (max-width: 480px) {
   .hero { padding: 3.5rem 1.5rem 4.5rem; }
   .hero-glyph { font-size: 20rem; top: -4rem; right: -3rem; }
+  .hero-net { left: 15%; opacity: 0.22; }
   .section { padding: 3rem 1.5rem; }
   .demo-box { padding: 1.25rem 1.35rem; }
 }

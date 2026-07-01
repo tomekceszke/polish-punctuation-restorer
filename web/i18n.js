@@ -3,7 +3,7 @@
 const STRINGS = {
   pl: {
     "hero.title": 'Wklej tekst<span class="accent">.</span><br>Odzyskaj przecinki<span class="accent">.</span>',
-    "hero.sub": "Sieć neuronowa, która czyta Twój tekst i stawia brakujące przecinki oraz kropki — wytrenowana na klasyce polskiej literatury.",
+    "hero.sub": "Ręcznie napisana od zera sieć neuronowa, która czyta Twój tekst i stawia brakujące przecinki oraz kropki — wytrenowana na klasyce polskiej literatury.",
     "hero.cta": "Zobacz, jak działa ↓",
 
     "demo.title": "Tekst bez interpunkcji? Chwileczkę.",
@@ -23,7 +23,8 @@ const STRINGS = {
 
     "books.title": "Wytrenowany na klasyce",
     "books.lead": "Model uczył się interpunkcji z ~1,2 miliona słów polskiej literatury — lektur, które każdy zna ze szkoły.",
-    "books.testTag": "zbiór testowy",
+    "books.trainLabel": "zbiór treningowy · 9 książek",
+    "books.testLabel": "zbiór testowy · 2 książki",
     "books.credit": 'Teksty pochodzą z biblioteki <a href="https://wolnelektury.pl" target="_blank" rel="noopener">Wolne Lektury</a>.',
 
     "tech.title": "Dla ciekawskich: co pod maską",
@@ -32,6 +33,7 @@ const STRINGS = {
     "tech.f2": "Macro-F1 (test)",
     "tech.f3": "ponad bazę bigramową (0,511)",
     "tech.f4": "użytych bibliotek ML",
+    "tech.f5": "linii kodu Octave",
     "tech.arch.in": "okno 7 słów",
     "tech.arch.hidden": "warstwa ukryta",
     "tech.archCaption": "Perceptron wielowarstwowy (MLP): dla każdego słowa przewiduje jedną z trzech klas — brak znaku, przecinek, kropka.",
@@ -43,22 +45,23 @@ const STRINGS = {
     "tech.r4": "+ wielkie litery",
     "tech.r5": "API i wersja MVP",
 
-    "links.title": "Paper i kod",
+    "links.title": "Publikacja i kod",
     "links.paperKicker": "artykuł naukowy (draft)",
     "links.repoKicker": "kod źródłowy · MIT",
 
     "footer.line1": "Projekt badawczo-edukacyjny · etap 1 z 5 · wyniki będą się poprawiać z każdym etapem.",
+    "footer.ai": "Rola AI: cała matematyka i kod modelu napisane ręcznie przez autora. AI pełniło rolę mentora — pytania i wskazówki, bez gotowego kodu. Z pomocą AI powstała natomiast ta strona.",
   },
 
   en: {
     "hero.title": 'Paste your text<span class="accent">.</span><br>Get your commas back<span class="accent">.</span>',
-    "hero.sub": "A neural network that reads your text and restores missing commas and periods — trained on classic Polish literature.",
+    "hero.sub": "A neural network written by hand, from scratch, that reads your text and restores missing commas and periods — trained on classic Polish literature.",
     "hero.cta": "See how it works ↓",
 
     "demo.title": "Text with no punctuation? One moment.",
     "demo.button": "Restore punctuation",
     "demo.badge": "DEMO",
-    "demo.note": "This is a scripted preview. A real text box connected to the model will appear here with the MVP release.",
+    "demo.note": "This is a scripted preview — the model works on Polish text, so the sample stays Polish. A real text box connected to the model will appear here with the MVP release.",
     "demo.working": "model is thinking…",
     "demo.done": "done ✓",
 
@@ -72,7 +75,8 @@ const STRINGS = {
 
     "books.title": "Trained on the classics",
     "books.lead": "The model learned punctuation from ~1.2 million words of Polish literature — the books everyone knows from school.",
-    "books.testTag": "test set",
+    "books.trainLabel": "training set · 9 books",
+    "books.testLabel": "test set · 2 books",
     "books.credit": 'Texts come from the <a href="https://wolnelektury.pl" target="_blank" rel="noopener">Wolne Lektury</a> free library.',
 
     "tech.title": "For the curious: under the hood",
@@ -81,6 +85,7 @@ const STRINGS = {
     "tech.f2": "Macro-F1 (test)",
     "tech.f3": "over the bigram baseline (0.511)",
     "tech.f4": "ML libraries used",
+    "tech.f5": "lines of Octave code",
     "tech.arch.in": "7-word window",
     "tech.arch.hidden": "hidden layer",
     "tech.archCaption": "A multilayer perceptron (MLP): for every word it predicts one of three classes — no mark, comma, or period.",
@@ -97,19 +102,14 @@ const STRINGS = {
     "links.repoKicker": "source code · MIT",
 
     "footer.line1": "A research & educational project · stage 1 of 5 · results improve with every stage.",
+    "footer.ai": "AI's role: all the math and model code were written by hand by the author. AI served as a mentor — questions and hints, no ready-made code. This website, however, was built with AI assistance.",
   },
 };
 
 // Demo sample sentences (with punctuation; the animation strips and restores it).
-const DEMO_SAMPLES = {
-  pl: [
-    "Wiosna przyszła nagle, śnieg stopniał w ciągu jednej nocy, a rzeka wylała na łąki.",
-    "Nie wiedział, co powiedzieć, więc milczał.",
-    "Zmierzchało się, gdy wóz zajechał przed dwór, a w oknach zapalono światła.",
-  ],
-  en: [
-    "Spring came suddenly, the snow melted in a single night, and the river flooded the meadows.",
-    "He did not know what to say, so he said nothing.",
-    "Dusk was falling when the cart drew up before the manor, and lights appeared in the windows.",
-  ],
-};
+// Always Polish — the model only handles Polish text, regardless of UI language.
+const DEMO_SAMPLES = [
+  "Wiosna przyszła nagle, śnieg stopniał w ciągu jednej nocy, a rzeka wylała na łąki.",
+  "Nie wiedział, co powiedzieć, więc milczał.",
+  "Zmierzchało się, gdy wóz zajechał przed dwór, a w oknach zapalono światła.",
+];

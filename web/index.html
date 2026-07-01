@@ -29,9 +29,10 @@
 
   <!-- ============ HERO ============ -->
   <section class="hero">
+    <div class="hero-net" id="heroNet" aria-hidden="true"></div>
     <div class="hero-glyph" aria-hidden="true">,</div>
     <h1 class="hero-title" data-i18n-html="hero.title">Wklej tekst<span class="accent">.</span><br>Odzyskaj przecinki<span class="accent">.</span></h1>
-    <p class="hero-sub" data-i18n="hero.sub">Sieć neuronowa, która czyta Twój tekst i stawia brakujące przecinki oraz kropki — wytrenowana na klasyce polskiej literatury.</p>
+    <p class="hero-sub" data-i18n="hero.sub">Ręcznie napisana od zera sieć neuronowa, która czyta Twój tekst i stawia brakujące przecinki oraz kropki — wytrenowana na klasyce polskiej literatury.</p>
     <a class="hero-cta" href="#demo" data-i18n="hero.cta">Zobacz, jak działa ↓</a>
   </section>
 
@@ -74,6 +75,7 @@
   <section class="section books-section">
     <h2 class="section-title" data-i18n="books.title">Wytrenowany na klasyce</h2>
     <p class="section-lead" data-i18n="books.lead">Model uczył się interpunkcji z ~1,2 miliona słów polskiej literatury — lektur, które każdy zna ze szkoły.</p>
+    <p class="books-group-label" data-i18n="books.trainLabel">zbiór treningowy · 9 książek</p>
     <div class="books-grid">
       <div class="book"><span class="book-title">Chłopi</span><span class="book-author">Władysław Reymont</span></div>
       <div class="book"><span class="book-title">Lalka</span><span class="book-author">Bolesław Prus</span></div>
@@ -84,8 +86,11 @@
       <div class="book"><span class="book-title">Proces</span><span class="book-author">Franz Kafka</span></div>
       <div class="book"><span class="book-title">Mały Książę</span><span class="book-author">Antoine de Saint-Exupéry</span></div>
       <div class="book"><span class="book-title">Rok 1984</span><span class="book-author">George Orwell</span></div>
-      <div class="book book-test"><span class="book-title">Syzyfowe prace</span><span class="book-author">Stefan Żeromski</span><span class="book-tag" data-i18n="books.testTag">zbiór testowy</span></div>
-      <div class="book book-test"><span class="book-title">Tajemniczy ogród</span><span class="book-author">Frances H. Burnett</span><span class="book-tag" data-i18n="books.testTag">zbiór testowy</span></div>
+    </div>
+    <p class="books-group-label books-group-test" data-i18n="books.testLabel">zbiór testowy · 2 książki</p>
+    <div class="books-grid">
+      <div class="book"><span class="book-title">Syzyfowe prace</span><span class="book-author">Stefan Żeromski</span></div>
+      <div class="book"><span class="book-title">Tajemniczy ogród</span><span class="book-author">Frances H. Burnett</span></div>
     </div>
     <p class="books-credit" data-i18n-html="books.credit">Teksty pochodzą z biblioteki <a href="https://wolnelektury.pl" target="_blank" rel="noopener">Wolne Lektury</a>.</p>
   </section>
@@ -100,6 +105,7 @@
       <div class="fact"><span class="fact-value">0,608</span><span class="fact-label" data-i18n="tech.f2">Macro-F1 (test)</span></div>
       <div class="fact"><span class="fact-value">+9,7&nbsp;pp</span><span class="fact-label" data-i18n="tech.f3">ponad bazę bigramową (0,511)</span></div>
       <div class="fact"><span class="fact-value">0</span><span class="fact-label" data-i18n="tech.f4">użytych bibliotek ML</span></div>
+      <div class="fact"><span class="fact-value">678</span><span class="fact-label" data-i18n="tech.f5">linii kodu Octave</span></div>
     </div>
 
     <figure class="arch">
@@ -144,7 +150,7 @@
 
   <!-- ============ PAPER & CODE ============ -->
   <section class="section links-section">
-    <h2 class="section-title" data-i18n="links.title">Paper i kod</h2>
+    <h2 class="section-title" data-i18n="links.title">Publikacja i kod</h2>
     <div class="links-grid">
       <a class="link-card" href="https://github.com/tomekceszke/polish-punctuation-restorer/blob/main/paper/paper.md" target="_blank" rel="noopener">
         <span class="link-kicker" data-i18n="links.paperKicker">artykuł naukowy (draft)</span>
@@ -163,6 +169,7 @@
 
 <footer class="site-footer">
   <p data-i18n="footer.line1">Projekt badawczo-edukacyjny · etap 1 z 5 · wyniki będą się poprawiać z każdym etapem.</p>
+  <p class="footer-ai" data-i18n="footer.ai">Rola AI: cała matematyka i kod modelu napisane ręcznie przez autora. AI pełniło rolę mentora — pytania i wskazówki, bez gotowego kodu. Z pomocą AI powstała natomiast ta strona.</p>
   <p class="footer-author">Tomasz Ceszke · MIT License · 2026</p>
 </footer>
 

@@ -66,7 +66,7 @@ async function runDemoLoop(lang) {
   const gen = ++generation;
   const alive = () => gen === generation;
   const dict = STRINGS[lang];
-  const samples = DEMO_SAMPLES[lang];
+  const samples = DEMO_SAMPLES; // always Polish — the model only handles Polish text
   let idx = 0;
 
   if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
@@ -120,6 +120,41 @@ async function runDemoLoop(lang) {
   }
 }
 
+/* ===== Ambient hero background: thin-line MLP schematic ===== */
+function drawHeroNet() {
+  const layers = [
+    { x: 80, ys: [140, 260, 380, 500, 620] },
+    { x: 420, ys: [80, 180, 280, 380, 480, 580, 680] },
+    { x: 760, ys: [230, 380, 530] },
+  ];
+  const svgNS = "http://www.w3.org/2000/svg";
+  const svg = document.createElementNS(svgNS, "svg");
+  svg.setAttribute("viewBox", "0 0 840 760");
+  svg.setAttribute("preserveAspectRatio", "xMidYMid slice");
+  for (let l = 0; l < layers.length - 1; l++) {
+    for (const y1 of layers[l].ys) {
+      for (const y2 of layers[l + 1].ys) {
+        const line = document.createElementNS(svgNS, "line");
+        line.setAttribute("x1", layers[l].x);
+        line.setAttribute("y1", y1);
+        line.setAttribute("x2", layers[l + 1].x);
+        line.setAttribute("y2", y2);
+        svg.appendChild(line);
+      }
+    }
+  }
+  for (const layer of layers) {
+    for (const y of layer.ys) {
+      const c = document.createElementNS(svgNS, "circle");
+      c.setAttribute("cx", layer.x);
+      c.setAttribute("cy", y);
+      c.setAttribute("r", 7);
+      svg.appendChild(c);
+    }
+  }
+  document.getElementById("heroNet").appendChild(svg);
+}
+
 /* ===== Wiring ===== */
 function setLang(lang) {
   localStorage.setItem(LANG_KEY, lang);
@@ -131,4 +166,5 @@ document.getElementById("langToggle").addEventListener("click", () => {
   setLang(currentLang() === "pl" ? "en" : "pl");
 });
 
+drawHeroNet();
 setLang(currentLang());
