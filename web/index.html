@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Polish Punctuation Restorer — przecinki wracają na miejsce</title>
+  <meta name="description" content="Sieć neuronowa, która uzupełnia brakujące przecinki i kropki w polskim tekście. Projekt badawczy zbudowany od zera, wytrenowany na klasyce polskiej literatury.">
+  <meta property="og:title" content="Polish Punctuation Restorer">
+  <meta property="og:description" content="Wklej tekst. Odzyskaj przecinki. Sieć neuronowa wytrenowana na polskich lekturach.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://tomek.ceszke.com/polish-punctuation-restorer/">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&family=Lora:ital@0;1&display=swap" rel="stylesheet">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='80' font-size='90' fill='%23e63b2e'>,</text></svg>">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="site-header">
+  <a class="logo" href="#" aria-label="Polish Punctuation Restorer">
+    <span class="logo-mark">,</span><span class="logo-dot">.</span>
+    <span class="logo-text">ppr</span>
+  </a>
+  <button class="lang-toggle" id="langToggle" aria-label="Switch language">EN</button>
+</header>
+
+<main>
+
+  <!-- ============ HERO ============ -->
+  <section class="hero">
+    <div class="hero-glyph" aria-hidden="true">,</div>
+    <h1 class="hero-title" data-i18n-html="hero.title">Wklej tekst<span class="accent">.</span><br>Odzyskaj przecinki<span class="accent">.</span></h1>
+    <p class="hero-sub" data-i18n="hero.sub">Sieć neuronowa, która czyta Twój tekst i stawia brakujące przecinki oraz kropki — wytrenowana na klasyce polskiej literatury.</p>
+    <a class="hero-cta" href="#demo" data-i18n="hero.cta">Zobacz, jak działa ↓</a>
+  </section>
+
+  <!-- ============ DEMO ============ -->
+  <section class="section demo-section" id="demo">
+    <h2 class="section-title" data-i18n="demo.title">Tekst bez interpunkcji? Chwileczkę.</h2>
+    <div class="demo">
+      <div class="demo-box" id="demoBox" aria-live="polite"></div>
+      <div class="demo-actions">
+        <button class="demo-btn" id="demoBtn" tabindex="-1" data-i18n="demo.button">Uzupełnij znaki</button>
+        <span class="demo-status" id="demoStatus"></span>
+      </div>
+      <p class="demo-note"><span class="demo-badge" data-i18n="demo.badge">DEMO</span> <span data-i18n="demo.note">To animacja poglądowa. Prawdziwe pole tekstowe podłączone do modelu pojawi się tu wraz z wersją MVP.</span></p>
+    </div>
+  </section>
+
+  <!-- ============ HOW IT WORKS ============ -->
+  <section class="section">
+    <h2 class="section-title" data-i18n="how.title">Jak to działa?</h2>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <h3 data-i18n="how.s1.title">Czyta okno 7 słów</h3>
+        <p data-i18n="how.s1.text">Model patrzy na każde słowo w kontekście — trzy słowa przed nim i trzy po nim. Tak jak człowiek, który nie stawia przecinka w ciemno.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <h3 data-i18n="how.s2.title">Sieć zgaduje znak</h3>
+        <p data-i18n="how.s2.text">Sieć neuronowa ocenia, co powinno stać po danym słowie: nic, przecinek czy kropka. Nauczyła się tego z ponad miliona słów polskiej prozy.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <h3 data-i18n="how.s3.title">I tak słowo po słowie</h3>
+        <p data-i18n="how.s3.text">Procedura powtarza się dla całego tekstu. Na końcu dostajesz ten sam tekst — tylko z interpunkcją na swoim miejscu.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ BOOKS ============ -->
+  <section class="section books-section">
+    <h2 class="section-title" data-i18n="books.title">Wytrenowany na klasyce</h2>
+    <p class="section-lead" data-i18n="books.lead">Model uczył się interpunkcji z ~1,2 miliona słów polskiej literatury — lektur, które każdy zna ze szkoły.</p>
+    <div class="books-grid">
+      <div class="book"><span class="book-title">Chłopi</span><span class="book-author">Władysław Reymont</span></div>
+      <div class="book"><span class="book-title">Lalka</span><span class="book-author">Bolesław Prus</span></div>
+      <div class="book"><span class="book-title">Ziemia obiecana</span><span class="book-author">Władysław Reymont</span></div>
+      <div class="book"><span class="book-title">Nad Niemnem</span><span class="book-author">Eliza Orzeszkowa</span></div>
+      <div class="book"><span class="book-title">Przedwiośnie</span><span class="book-author">Stefan Żeromski</span></div>
+      <div class="book"><span class="book-title">Moralność pani Dulskiej</span><span class="book-author">Gabriela Zapolska</span></div>
+      <div class="book"><span class="book-title">Proces</span><span class="book-author">Franz Kafka</span></div>
+      <div class="book"><span class="book-title">Mały Książę</span><span class="book-author">Antoine de Saint-Exupéry</span></div>
+      <div class="book"><span class="book-title">Rok 1984</span><span class="book-author">George Orwell</span></div>
+      <div class="book book-test"><span class="book-title">Syzyfowe prace</span><span class="book-author">Stefan Żeromski</span><span class="book-tag" data-i18n="books.testTag">zbiór testowy</span></div>
+      <div class="book book-test"><span class="book-title">Tajemniczy ogród</span><span class="book-author">Frances H. Burnett</span><span class="book-tag" data-i18n="books.testTag">zbiór testowy</span></div>
+    </div>
+    <p class="books-credit" data-i18n-html="books.credit">Teksty pochodzą z biblioteki <a href="https://wolnelektury.pl" target="_blank" rel="noopener">Wolne Lektury</a>.</p>
+  </section>
+
+  <!-- ============ TECH ============ -->
+  <section class="section tech-section">
+    <h2 class="section-title" data-i18n="tech.title">Dla ciekawskich: co pod maską</h2>
+    <p class="section-lead" data-i18n="tech.lead">Wszystko zbudowane od zera w GNU Octave — bez bibliotek ML, z gradientami wyprowadzonymi ręcznie na kartce.</p>
+
+    <div class="facts-grid">
+      <div class="fact"><span class="fact-value">282,5&nbsp;tys.</span><span class="fact-label" data-i18n="tech.f1">parametrów</span></div>
+      <div class="fact"><span class="fact-value">0,608</span><span class="fact-label" data-i18n="tech.f2">Macro-F1 (test)</span></div>
+      <div class="fact"><span class="fact-value">+9,7&nbsp;pp</span><span class="fact-label" data-i18n="tech.f3">ponad bazę bigramową (0,511)</span></div>
+      <div class="fact"><span class="fact-value">0</span><span class="fact-label" data-i18n="tech.f4">użytych bibliotek ML</span></div>
+    </div>
+
+    <figure class="arch">
+      <svg viewBox="0 0 720 150" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Architecture: 7-word window, embedding, hidden ReLU layer, softmax">
+        <g class="arch-node">
+          <rect x="8" y="40" width="140" height="70" rx="10"/>
+          <text x="78" y="70" text-anchor="middle" class="arch-t1" data-i18n="tech.arch.in">okno 7 słów</text>
+          <text x="78" y="92" text-anchor="middle" class="arch-t2">w₋₃ … w₊₃</text>
+        </g>
+        <path class="arch-arrow" d="M152 75 h32"/>
+        <g class="arch-node">
+          <rect x="188" y="40" width="150" height="70" rx="10"/>
+          <text x="263" y="70" text-anchor="middle" class="arch-t1">embedding</text>
+          <text x="263" y="92" text-anchor="middle" class="arch-t2">5000 × 50</text>
+        </g>
+        <path class="arch-arrow" d="M342 75 h32"/>
+        <g class="arch-node">
+          <rect x="378" y="40" width="150" height="70" rx="10"/>
+          <text x="453" y="70" text-anchor="middle" class="arch-t1" data-i18n="tech.arch.hidden">warstwa ukryta</text>
+          <text x="453" y="92" text-anchor="middle" class="arch-t2">128 · ReLU</text>
+        </g>
+        <path class="arch-arrow" d="M532 75 h32"/>
+        <g class="arch-node arch-out">
+          <rect x="568" y="40" width="144" height="70" rx="10"/>
+          <text x="640" y="70" text-anchor="middle" class="arch-t1">softmax</text>
+          <text x="640" y="92" text-anchor="middle" class="arch-t2">∅&nbsp;&nbsp;,&nbsp;&nbsp;.</text>
+        </g>
+      </svg>
+      <figcaption data-i18n="tech.archCaption">Perceptron wielowarstwowy (MLP): dla każdego słowa przewiduje jedną z trzech klas — brak znaku, przecinek, kropka.</figcaption>
+    </figure>
+
+    <h3 class="roadmap-title" data-i18n="tech.roadmapTitle">Mapa drogowa projektu</h3>
+    <ol class="roadmap">
+      <li class="done"><span class="stage">0</span><span data-i18n="tech.r0">Baza bigramowa</span></li>
+      <li class="done current"><span class="stage">1</span><span data-i18n="tech.r1">MLP z ręcznym backpropem</span></li>
+      <li><span class="stage">2</span><span data-i18n="tech.r2">Bi-LSTM / mini-Transformer</span></li>
+      <li><span class="stage">3</span><span data-i18n="tech.r3">Więcej znaków: ? !</span></li>
+      <li><span class="stage">4</span><span data-i18n="tech.r4">+ wielkie litery</span></li>
+      <li><span class="stage">5</span><span data-i18n="tech.r5">API i wersja MVP</span></li>
+    </ol>
+  </section>
+
+  <!-- ============ PAPER & CODE ============ -->
+  <section class="section links-section">
+    <h2 class="section-title" data-i18n="links.title">Paper i kod</h2>
+    <div class="links-grid">
+      <a class="link-card" href="https://github.com/tomekceszke/polish-punctuation-restorer/blob/main/paper/paper.md" target="_blank" rel="noopener">
+        <span class="link-kicker" data-i18n="links.paperKicker">artykuł naukowy (draft)</span>
+        <span class="link-name">Polish Punctuation Restorer — paper</span>
+        <span class="link-arrow">→</span>
+      </a>
+      <a class="link-card" href="https://github.com/tomekceszke/polish-punctuation-restorer" target="_blank" rel="noopener">
+        <span class="link-kicker" data-i18n="links.repoKicker">kod źródłowy · MIT</span>
+        <span class="link-name">github.com/tomekceszke/polish-punctuation-restorer</span>
+        <span class="link-arrow">→</span>
+      </a>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  <p data-i18n="footer.line1">Projekt badawczo-edukacyjny · etap 1 z 5 · wyniki będą się poprawiać z każdym etapem.</p>
+  <p class="footer-author">Tomasz Ceszke · MIT License · 2026</p>
+</footer>
+
+<script src="i18n.js"></script>
+<script src="script.js"></script>
+</body>
+</html>

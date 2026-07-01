@@ -1,5 +1,7 @@
 # Polish Punctuation Restorer
 
+🌐 **Website:** [tomek.ceszke.com/polish-punctuation-restorer](https://tomek.ceszke.com/polish-punctuation-restorer/)
+
 An educational project — building a sequential punctuation classifier from scratch in GNU Octave, deriving all math by hand and implementing backprop manually on matrices. No external ML libraries.
 
 **Task:** given a Polish word, predict the punctuation mark that follows it: none, comma, or period.
