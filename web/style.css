@@ -377,14 +377,46 @@ a { color: inherit; }
 .fact-label { color: var(--ink-soft); font-size: 0.92rem; }
 
 .arch { margin: 0 0 3rem; }
-.arch svg { width: 100%; height: auto; display: block; }
-.arch-node rect { fill: var(--bg-raised); stroke: var(--line); stroke-width: 1.5; }
-.arch-out rect { stroke: var(--accent); }
-.arch-t1 { font-family: var(--font-display); font-weight: 500; font-size: 15px; fill: var(--ink); }
-.arch-t2 { font-family: var(--font-body); font-size: 13px; fill: var(--ink-soft); }
-.arch-out .arch-t2 { fill: var(--accent); font-weight: 700; }
-.arch-arrow { stroke: var(--ink-soft); stroke-width: 1.5; marker-end: none; }
+
+.arch-flow {
+  display: flex;
+  align-items: stretch;
+}
+
+.arch-node {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.2rem;
+  text-align: center;
+  background: var(--bg-raised);
+  border: 1.5px solid var(--line);
+  border-radius: 10px;
+  padding: 1rem 0.75rem;
+}
+.arch-out { border-color: var(--accent); }
+
+.arch-t1 { font-family: var(--font-display); font-weight: 500; font-size: 0.98rem; }
+.arch-t2 { font-size: 0.85rem; color: var(--ink-soft); }
+.arch-out .arch-t2 { color: var(--accent); font-weight: 700; }
+
+.arch-link {
+  flex: none;
+  align-self: center;
+  width: 2rem;
+  height: 1.5px;
+  background: var(--ink-soft);
+}
+
 .arch figcaption { color: var(--ink-soft); font-size: 0.92rem; margin-top: 1rem; max-width: 40rem; }
+
+@media (max-width: 640px) {
+  .arch-flow { flex-direction: column; }
+  .arch-node { width: 100%; flex: none; }
+  .arch-link { width: 1.5px; height: 1.5rem; }
+}
 
 .roadmap-title {
   font-family: var(--font-display);

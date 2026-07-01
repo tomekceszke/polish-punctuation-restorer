@@ -108,32 +108,28 @@
       <div class="fact"><span class="fact-value">678</span><span class="fact-label" data-i18n="tech.f5">linii kodu Octave</span></div>
     </div>
 
-    <figure class="arch">
-      <svg viewBox="0 0 720 150" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Architecture: 7-word window, embedding, hidden ReLU layer, softmax">
-        <g class="arch-node">
-          <rect x="8" y="40" width="140" height="70" rx="10"/>
-          <text x="78" y="70" text-anchor="middle" class="arch-t1" data-i18n="tech.arch.in">okno 7 słów</text>
-          <text x="78" y="92" text-anchor="middle" class="arch-t2">w₋₃ … w₊₃</text>
-        </g>
-        <path class="arch-arrow" d="M152 75 h32"/>
-        <g class="arch-node">
-          <rect x="188" y="40" width="150" height="70" rx="10"/>
-          <text x="263" y="70" text-anchor="middle" class="arch-t1">embedding</text>
-          <text x="263" y="92" text-anchor="middle" class="arch-t2">5000 × 50</text>
-        </g>
-        <path class="arch-arrow" d="M342 75 h32"/>
-        <g class="arch-node">
-          <rect x="378" y="40" width="150" height="70" rx="10"/>
-          <text x="453" y="70" text-anchor="middle" class="arch-t1" data-i18n="tech.arch.hidden">warstwa ukryta</text>
-          <text x="453" y="92" text-anchor="middle" class="arch-t2">128 · ReLU</text>
-        </g>
-        <path class="arch-arrow" d="M532 75 h32"/>
-        <g class="arch-node arch-out">
-          <rect x="568" y="40" width="144" height="70" rx="10"/>
-          <text x="640" y="70" text-anchor="middle" class="arch-t1">softmax</text>
-          <text x="640" y="92" text-anchor="middle" class="arch-t2">∅&nbsp;&nbsp;,&nbsp;&nbsp;.</text>
-        </g>
-      </svg>
+    <figure class="arch" aria-label="Architecture: 7-word window, embedding, hidden ReLU layer, softmax">
+      <div class="arch-flow">
+        <div class="arch-node">
+          <span class="arch-t1" data-i18n="tech.arch.in">okno 7 słów</span>
+          <span class="arch-t2">w₋₃ … w₊₃</span>
+        </div>
+        <div class="arch-link"></div>
+        <div class="arch-node">
+          <span class="arch-t1">embedding</span>
+          <span class="arch-t2">5000 × 50</span>
+        </div>
+        <div class="arch-link"></div>
+        <div class="arch-node">
+          <span class="arch-t1" data-i18n="tech.arch.hidden">warstwa ukryta</span>
+          <span class="arch-t2">128 · ReLU</span>
+        </div>
+        <div class="arch-link"></div>
+        <div class="arch-node arch-out">
+          <span class="arch-t1">softmax</span>
+          <span class="arch-t2">∅&nbsp;&nbsp;,&nbsp;&nbsp;.</span>
+        </div>
+      </div>
       <figcaption data-i18n="tech.archCaption">Perceptron wielowarstwowy (MLP): dla każdego słowa przewiduje jedną z trzech klas — brak znaku, przecinek, kropka.</figcaption>
     </figure>
 
