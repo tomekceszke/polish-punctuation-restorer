@@ -134,7 +134,7 @@ a { color: inherit; }
 .hero-sub {
   font-size: clamp(1.05rem, 2vw, 1.3rem);
   color: var(--ink-soft);
-  max-width: 34rem;
+  max-width: 40rem;
   margin: 0 0 2.5rem;
 }
 
@@ -177,7 +177,6 @@ a { color: inherit; }
 }
 
 /* ===== Demo ===== */
-.demo { max-width: 46rem; }
 
 .demo-box {
   font-family: var(--font-serif);
@@ -262,7 +261,7 @@ a { color: inherit; }
   margin-top: 1.5rem;
   color: var(--ink-soft);
   font-size: 0.92rem;
-  max-width: 36rem;
+  max-width: 40rem;
 }
 
 .demo-badge {
@@ -459,7 +458,7 @@ a { color: inherit; }
 .roadmap li.done .stage { background: var(--accent); border-color: var(--accent); color: #fff; }
 
 /* ===== Links ===== */
-.links-grid { display: grid; gap: 1rem; max-width: 46rem; }
+.links-grid { display: grid; gap: 1rem; }
 
 .link-card {
   display: grid;
@@ -509,7 +508,7 @@ a { color: inherit; }
 .footer-ai {
   margin-top: 0.8rem;
   font-size: 0.88rem;
-  max-width: 46rem;
+  max-width: 40rem;
   padding-left: 1rem;
   border-left: 2px solid var(--accent);
 }
