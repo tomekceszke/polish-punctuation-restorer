@@ -24,7 +24,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Cache-bust asset links
-        run: sed -i "s/?v=dev/?v=${GITHUB_SHA::8}/g" web/index.html
+        run: sed -E -i "s/(style\.css|i18n\.js|script\.js)\"/\1?v=${GITHUB_SHA::8}\"/g" web/index.html
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
