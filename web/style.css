@@ -42,6 +42,10 @@ body {
 
 .accent { color: var(--accent); }
 
+/* Site-wide punctuation motif: spans injected by accentPunctuation() in script.js */
+.punct { color: var(--accent); }
+h1 .punct, h2 .punct, h3 .punct { font-weight: 700; }
+
 a { color: inherit; }
 
 /* ===== Header ===== */
@@ -57,12 +61,11 @@ a { color: inherit; }
 .logo {
   font-family: var(--font-display);
   font-weight: 700;
-  font-size: 2.1rem;
+  font-size: 2.6rem;
   text-decoration: none;
   letter-spacing: -0.02em;
 }
 .logo-mark, .logo-dot { color: var(--accent); }
-.logo-text { margin-left: 0.35rem; }
 
 .lang-toggle {
   font-family: var(--font-display);
@@ -137,6 +140,38 @@ a { color: inherit; }
   max-width: 40rem;
   margin: 0 0 2.5rem;
 }
+
+.craft-badges {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.7rem 0.8rem;
+  margin: 0 0 2.75rem;
+  padding: 0;
+  max-width: 40rem;
+}
+
+.craft-badges li {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: 0.78rem;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  padding: 0.42rem 0.85rem;
+  border: 1.5px solid var(--ink);
+  border-radius: 8px;
+  background: var(--bg-raised);
+  transition: transform 0.2s;
+}
+.craft-badges li::before {
+  content: "✱ ";
+  color: var(--accent);
+}
+.craft-badges li:nth-child(1) { transform: rotate(-1.4deg); }
+.craft-badges li:nth-child(2) { transform: rotate(1deg); }
+.craft-badges li:nth-child(3) { transform: rotate(-0.8deg); }
+.craft-badges li:nth-child(4) { transform: rotate(1.3deg); }
+.craft-badges li:hover { transform: rotate(0); }
 
 .hero-cta {
   display: inline-block;
@@ -225,8 +260,8 @@ a { color: inherit; }
 .demo-btn {
   font-family: var(--font-display);
   font-weight: 500;
-  font-size: 1rem;
-  padding: 0.8rem 1.5rem;
+  font-size: 1.05rem;
+  padding: 0.85rem 1.6rem;
   border: none;
   border-radius: 999px;
   background: var(--accent);
@@ -258,23 +293,23 @@ a { color: inherit; }
 @keyframes spin { to { transform: rotate(360deg); } }
 
 .demo-note {
+  position: relative;
   margin-top: 1.5rem;
+  padding-left: 1.35rem;
   color: var(--ink-soft);
-  font-size: 0.92rem;
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 0.9rem;
   max-width: 40rem;
 }
-
-.demo-badge {
-  font-family: var(--font-display);
-  font-weight: 700;
-  font-size: 0.72rem;
-  letter-spacing: 0.08em;
+.demo-note::before {
+  content: "✱";
+  position: absolute;
+  left: 0;
+  top: 0.15em;
+  font-style: normal;
+  font-size: 0.85em;
   color: var(--accent);
-  border: 1.5px solid var(--accent);
-  border-radius: 6px;
-  padding: 0.1rem 0.45rem;
-  margin-right: 0.5rem;
-  vertical-align: 0.08em;
 }
 
 /* ===== Steps ===== */
@@ -427,12 +462,13 @@ a { color: inherit; }
   list-style: none;
   margin: 0;
   padding: 0;
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(10.5rem, 1fr));
-  gap: 0.75rem;
+  max-width: 30rem;
+  display: flex;
+  flex-direction: column;
 }
 
 .roadmap li {
+  position: relative;
   display: flex;
   align-items: center;
   gap: 0.7rem;
@@ -442,6 +478,17 @@ a { color: inherit; }
   font-size: 0.92rem;
   color: var(--ink-soft);
 }
+.roadmap li + li { margin-top: 1.1rem; }
+.roadmap li + li::before {
+  content: "";
+  position: absolute;
+  left: calc(1rem + 0.9rem - 0.75px);
+  top: calc(-1.1rem - 1.5px);
+  width: 1.5px;
+  height: calc(1.1rem + 1.5px);
+  background: var(--line);
+}
+.roadmap li.done + li.done::before { background: var(--accent); }
 .roadmap li.done { border-color: var(--accent); color: var(--ink); }
 .roadmap li.current { background: var(--accent-soft); }
 

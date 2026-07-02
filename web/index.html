@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Polish Punctuation Restorer — przecinki wracają na miejsce</title>
-  <meta name="description" content="Sieć neuronowa, która uzupełnia brakujące przecinki i kropki w polskim tekście. Projekt badawczy zbudowany od zera, wytrenowany na klasyce polskiej literatury.">
+  <meta name="description" content="Sieć neuronowa, która uzupełnia brakujące przecinki i kropki w polskim tekście. Projekt badawczy zbudowany od zera, wytrenowany na szkolnych lekturach.">
   <meta property="og:title" content="Polish Punctuation Restorer">
   <meta property="og:description" content="Wklej tekst. Odzyskaj przecinki. Sieć neuronowa wytrenowana na polskich lekturach.">
   <meta property="og:type" content="website">
@@ -13,14 +13,13 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&family=Lora:ital@0;1&display=swap" rel="stylesheet">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='80' font-size='90' fill='%23e63b2e'>,</text></svg>">
-  <link rel="stylesheet" href="style.css?v=dev">
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
 <header class="site-header">
   <a class="logo" href="#" aria-label="Polish Punctuation Restorer">
-    <span class="logo-mark">,</span><span class="logo-dot">.</span>
-    <span class="logo-text">ppr</span>
+    <span class="logo-mark">,</span><span class="logo-dot">.</span><span class="logo-text">ppr</span>
   </a>
   <button class="lang-toggle" id="langToggle" aria-label="Switch language">EN</button>
 </header>
@@ -32,7 +31,13 @@
     <div class="hero-net" id="heroNet" aria-hidden="true"></div>
     <div class="hero-glyph" aria-hidden="true">,</div>
     <h1 class="hero-title" data-i18n-html="hero.title">Wklej tekst<span class="accent">.</span><br>Odzyskaj przecinki<span class="accent">.</span></h1>
-    <p class="hero-sub" data-i18n="hero.sub">Ręcznie napisana od zera sieć neuronowa, która czyta Twój tekst i stawia brakujące przecinki oraz kropki — wytrenowana na klasyce polskiej literatury.</p>
+    <p class="hero-sub" data-i18n="hero.sub">Ręcznie napisana od zera sieć neuronowa, która czyta Twój tekst i stawia brakujące przecinki oraz kropki — wytrenowana na klasyce szkolnych lektur.</p>
+    <ul class="craft-badges" aria-label="Cechy projektu">
+      <li data-i18n="hero.b1">100% hand-crafted</li>
+      <li data-i18n="hero.b2">vintage · architektura 1986</li>
+      <li data-i18n="hero.b3">dojrzewała na klasykach</li>
+      <li data-i18n="hero.b4">bez sztucznych dodatków</li>
+    </ul>
     <a class="hero-cta" href="#demo" data-i18n="hero.cta">Zobacz, jak działa ↓</a>
   </section>
 
@@ -45,7 +50,7 @@
         <button class="demo-btn" id="demoBtn" tabindex="-1" data-i18n="demo.button">Uzupełnij znaki</button>
         <span class="demo-status" id="demoStatus"></span>
       </div>
-      <p class="demo-note"><span class="demo-badge" data-i18n="demo.badge">DEMO</span> <span data-i18n="demo.note">To animacja poglądowa. Prawdziwe pole tekstowe podłączone do modelu pojawi się tu wraz z wersją MVP.</span></p>
+      <p class="demo-note" data-i18n="demo.note">Animacja poglądowa — prawdziwe pole tekstowe podłączone do modelu pojawi się tu wraz z wersją MVP.</p>
     </div>
   </section>
 
@@ -55,13 +60,13 @@
     <div class="steps">
       <div class="step">
         <div class="step-num">1</div>
-        <h3 data-i18n="how.s1.title">Czyta okno 7 słów</h3>
+        <h3 data-i18n="how.s1.title">Czyta kontekst 7 słów</h3>
         <p data-i18n="how.s1.text">Model patrzy na każde słowo w kontekście — trzy słowa przed nim i trzy po nim. Tak jak człowiek, który nie stawia przecinka w ciemno.</p>
       </div>
       <div class="step">
         <div class="step-num">2</div>
         <h3 data-i18n="how.s2.title">Sieć zgaduje znak</h3>
-        <p data-i18n="how.s2.text">Sieć neuronowa ocenia, co powinno stać po danym słowie: nic, przecinek czy kropka. Nauczyła się tego z ponad miliona słów polskiej prozy.</p>
+        <p data-i18n="how.s2.text">Sieć neuronowa ocenia, co powinno stać po danym słowie: nic, przecinek czy kropka. Nauczyła się tego z ponad miliona słów prozy.</p>
       </div>
       <div class="step">
         <div class="step-num">3</div>
@@ -74,7 +79,7 @@
   <!-- ============ BOOKS ============ -->
   <section class="section books-section">
     <h2 class="section-title" data-i18n="books.title">Wytrenowany na klasyce</h2>
-    <p class="section-lead" data-i18n="books.lead">Model uczył się interpunkcji z ~1,2 miliona słów polskiej literatury — lektur, które każdy zna ze szkoły.</p>
+    <p class="section-lead" data-i18n="books.lead">Model uczył się interpunkcji z ~1,2 miliona słów literackiej polszczyzny — lektur, które każdy zna ze szkoły.</p>
     <p class="books-group-label" data-i18n="books.trainLabel">zbiór treningowy · 9 książek</p>
     <div class="books-grid">
       <div class="book"><span class="book-title">Chłopi</span><span class="book-author">Władysław Reymont</span></div>
@@ -98,7 +103,7 @@
   <!-- ============ TECH ============ -->
   <section class="section tech-section">
     <h2 class="section-title" data-i18n="tech.title">Dla ciekawskich: co pod maską</h2>
-    <p class="section-lead" data-i18n="tech.lead">Wszystko zbudowane od zera w GNU Octave — bez bibliotek ML, z gradientami wyprowadzonymi ręcznie na kartce.</p>
+    <p class="section-lead" data-i18n="tech.lead">Wszystko zbudowane od zera w GNU Octave — bez bibliotek ML, z gradientami wyprowadzonymi ręcznie na kartce. Architektura w dobrym, starym stylu: MLP, rocznik 1986. Zero transformerów — na razie.</p>
 
     <div class="facts-grid">
       <div class="fact"><span class="fact-value">282,5&nbsp;tys.</span><span class="fact-label" data-i18n="tech.f1">parametrów</span></div>
@@ -169,7 +174,7 @@
   <p class="footer-author">Tomasz Ceszke · MIT License · 2026</p>
 </footer>
 
-<script src="i18n.js?v=dev"></script>
-<script src="script.js?v=dev"></script>
+<script src="i18n.js"></script>
+<script src="script.js"></script>
 </body>
 </html>

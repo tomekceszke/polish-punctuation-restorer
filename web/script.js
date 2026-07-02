@@ -120,6 +120,49 @@ async function runDemoLoop(lang) {
   }
 }
 
+/* ===== Site-wide punctuation motif =====
+   Wraps every , and . in page text in <span class="punct"> (accent color;
+   bold in headings via CSS). Skips the demo box (own .mark system), already
+   wrapped nodes, and decimal separators ("1,2", "0,608"). Re-run after every
+   applyLang(): i18n swaps reset textContent and destroy the wraps. */
+function accentPunctuation() {
+  document.querySelectorAll("main, footer").forEach((root) => {
+    const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
+      acceptNode(node) {
+        const parent = node.parentElement;
+        if (!parent || parent.closest("#demoBox, .punct, .accent")) {
+          return NodeFilter.FILTER_REJECT;
+        }
+        return /[,.]/.test(node.nodeValue)
+          ? NodeFilter.FILTER_ACCEPT
+          : NodeFilter.FILTER_SKIP;
+      },
+    });
+    const nodes = [];
+    while (walker.nextNode()) nodes.push(walker.currentNode);
+
+    for (const node of nodes) {
+      const text = node.nodeValue;
+      const frag = document.createDocumentFragment();
+      let last = 0;
+      for (const m of text.matchAll(/[,.]/g)) {
+        const isDecimal =
+          /\d/.test(text[m.index - 1] || "") && /\d/.test(text[m.index + 1] || "");
+        if (isDecimal) continue;
+        frag.appendChild(document.createTextNode(text.slice(last, m.index)));
+        const span = document.createElement("span");
+        span.className = "punct";
+        span.textContent = m[0];
+        frag.appendChild(span);
+        last = m.index + 1;
+      }
+      if (last === 0) continue;
+      frag.appendChild(document.createTextNode(text.slice(last)));
+      node.replaceWith(frag);
+    }
+  });
+}
+
 /* ===== Ambient hero background: thin-line MLP schematic ===== */
 function drawHeroNet() {
   const layers = [
@@ -159,6 +202,7 @@ function drawHeroNet() {
 function setLang(lang) {
   localStorage.setItem(LANG_KEY, lang);
   applyLang(lang);
+  accentPunctuation();
   runDemoLoop(lang);
 }
 
