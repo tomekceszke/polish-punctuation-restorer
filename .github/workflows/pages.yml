@@ -22,7 +22,7 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: Cache-bust asset links
         run: sed -E -i "s/(style\.css|i18n\.js|script\.js)\"/\1?v=${GITHUB_SHA::8}\"/g" web/index.html
       - uses: actions/configure-pages@v5

@@ -4,6 +4,7 @@ making_of/
 # OS, editor, build artifacts
 .DS_Store
 .vscode/
+.claude/
 *.mex*
 *.p
 *.mlappinstall

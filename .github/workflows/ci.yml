@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Install Octave
         run: |
@@ -29,19 +29,31 @@ jobs:
             disp('labelize: OK');
           "
 
-      - name: Smoke test — tokenize (writes temp file)
+      - name: Smoke test — tokenize (takes text, not a path)
         working-directory: src
         run: |
           octave --norc --no-gui --eval "
             addpath('lib');
-            tmp = tempname();
+            tokens = tokenize('Ala MA kota, a kot 42 ma Alę.');
+            assert(isequal(tokens, {'ala', 'ma', 'kota,', 'a', 'kot', 'ma', 'alę.'}));
+            disp('tokenize: OK');
+          "
+
+      - name: Smoke test — process (reads files)
+        working-directory: src
+        run: |
+          octave --norc --no-gui --eval "
+            addpath('lib');
+            tmp = [tempname() '.txt'];
             fid = fopen(tmp, 'w');
             fprintf(fid, 'Ala ma kota, a kot ma Alę.\n');
             fclose(fid);
-            tokens = tokenize(tmp);
-            assert(length(tokens) > 0);
+            [words, labels] = process({tmp});
             delete(tmp);
-            disp('tokenize: OK');
+            assert(isequal(words, {'ala', 'ma', 'kota', 'a', 'kot', 'ma', 'alę'}));
+            assert(isequal(labels, [1, 1, 2, 1, 1, 1, 3]));
+            assert(length(words) == length(labels));
+            disp('process: OK');
           "
 
       - name: Smoke test — build_vocab
