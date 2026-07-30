@@ -206,8 +206,11 @@ OUTPUT  [p_NONE, p_COMMA, p_PERIOD]
 | **Total** | | **~295,400** | |
 
 The embedding matrix has $V + 1$ rows: the extra row is the `<UNK>` vector, to which all
-out-of-vocabulary words are mapped. Windows that would cross a document boundary are dropped
-rather than padded.
+out-of-vocabulary words are mapped. During training and evaluation, windows that would cross a
+document boundary are dropped rather than padded. At inference time (`src/detect.m`) this is
+inverted: the index vector is padded with $k$ `<UNK>` entries at both ends, so that $n$ input words
+yield exactly $n$ windows and no word — in particular not the last one, which carries the
+sentence-final period — is left without a prediction.
 
 For scale, GPT-2 small has ~117M parameters — about 400× more. This mirrors the architecture of
 Bengio et al.'s neural probabilistic language model [1] — embed a fixed context window, concatenate,
@@ -542,6 +545,7 @@ MLP components (`mlp_init`, `mlp_forward`, `mlp_loss`), plus the numerical gradi
 | `src/train.m` | Stage 1 training loop (SGD, early stopping on validation macro-F1) |
 | `src/tests/` | smoke tests + numerical gradient check (`test_grad_check.m`) |
 | `src/check.m` | standalone test-set evaluation (reproduces the reported macro-F1) |
+| `src/detect.m` | interactive inference on arbitrary text (`<UNK>`-padded windows, no labels) |
 | `src/lib/` | tokenize, labelize, process, build_vocab, get_word_indices, build_windows, metrics |
 | `src/config/settings.m` | hyperparameters & data paths (`C_V`, `C_TRAIN_BOOKS`, …) |
 

@@ -68,6 +68,8 @@ A standards-conforming academic write-up of this project — goal, methodology, 
 - Output: `data/processed/train.mat`, `val.mat`, `test.mat`, `vocab.mat` — committed for reproducibility.
 - Bigram baseline: Macro-F1 = 0.511 (V=5000, trained on train+val — it needs no validation set). Full results in `notes/stage-0-results.md`.
 - MLP (`src/train.m`): mini-batch SGD with early stopping on validation Macro-F1; best weights committed as `data/processed/model.mat`. **Test Macro-F1 = 0.608** — the dominant tuning lever was class-weight tempering (`α=0.5`). Full results in `notes/stage-1-mlp.md`.
+- `src/check.m` reloads `model.mat` and reproduces the reported test Macro-F1 exactly.
+- `src/detect.m` runs the model on arbitrary text: prompts for sentences in a loop (empty line, `exit` or Ctrl-D quits, so the model is loaded once), tokenizes the input, pads the index vector with `k` `<UNK>` entries at both ends so every word (including the last) gets a window, then reassembles the words with the predicted marks. Output is lower-cased — `tokenize` folds case, and capitalisation is not restored.
 
 ### Label encoding
 
@@ -100,12 +102,13 @@ ppr/
 │   ├── mlp_backward.m       # Stage 1: manual backprop (all gradients)
 │   ├── train.m              # Stage 1: SGD training loop, early stopping on val Macro-F1
 │   ├── check.m              # Stage 1: test-set evaluation (loads model.mat, reports Macro-F1)
+│   ├── detect.m             # Stage 1: interactive inference — restores , and . in typed text
 │   ├── config/
 │   │   └── settings.m       # Shared constants: book lists + hyperparameters (C_V, C_K, C_LR, C_ALPHA, …)
 │   ├── lib/
-│   │   ├── tokenize.m       # Lowercase, strip, split on whitespace
+│   │   ├── tokenize.m       # Text in: lowercase, strip, split on whitespace
 │   │   ├── labelize.m       # Attach labels, strip trailing punctuation
-│   │   ├── process.m        # Load and process a single book file
+│   │   ├── process.m        # Read book files → (word, label) pairs
 │   │   ├── build_vocab.m    # Build top-N vocabulary from words
 │   │   ├── get_word_indices.m # Map words to vocab indices (UNK → N+1)
 │   │   ├── build_windows.m  # Build ±k context windows of word indices
@@ -120,13 +123,6 @@ ppr/
 │   ├── stage-0-results.md        # Baseline results: confusion matrix, F1 per class
 │   └── stage-1-mlp.md            # MLP architecture, formulas, gradient check
 ├── paper/                        # Academic write-up (WIP)
-```
-
-Planned additions (per learning plan):
-
-```
-src/
-└── detect.m                 # Inference on arbitrary text
 ```
 
 ---
@@ -145,6 +141,9 @@ octave-cli train.m
 
 # Evaluate the trained model on the test set
 octave-cli check.m
+
+# Restore punctuation in your own text (interactive; empty line or "exit" quits)
+octave-cli detect.m
 ```
 
 Preprocessing output is written to `../data/processed/train.mat`, `val.mat`, and `test.mat`; `train.m` builds `vocab.mat` from the train set if it is missing.
@@ -213,7 +212,7 @@ Results on the test set:
 +9.7 pp over the baseline — on par with the ≥10 pp target (within ±0.01 run-to-run init noise). The dominant tuning lever was **class-weight tempering**: `w ∝ (1/count)^α` with `α=0.5` instead of full inverse frequency, which traded excess rare-class recall for precision. Context radius and learning-rate changes gave only small gains; model capacity was not the bottleneck.
 
 Key implementation steps (all complete):
-1. Vocabulary with `<UNK>` (index V+1); boundary windows are dropped rather than padded.
+1. Vocabulary with `<UNK>` (index V+1); during training and evaluation boundary windows are dropped rather than padded. At inference (`detect.m`) they are padded with `<UNK>` instead, so no word of the user's input is left unpredicted.
 2. Forward pass with activation cache.
 3. Weighted cross-entropy loss — tempered inverse-frequency class weights `(N/(c·count))^α`.
 4. Backward pass — all gradients derived by hand, including embedding scatter-add.
@@ -221,6 +220,7 @@ Key implementation steps (all complete):
 6. He weight initialisation.
 7. Plain mini-batch SGD (momentum/Adam turned out unnecessary at this scale).
 8. Training loop (`src/train.m`) with early stopping on validation Macro-F1; best weights saved to `data/processed/model.mat`.
+9. Evaluation (`src/check.m`) and interactive inference on arbitrary text (`src/detect.m`).
 
 Math derived (in `notes/`): softmax Jacobian, softmax + CE simplification to `p − y`, ReLU gradient, embedding gradient (scatter-add), full chain-rule graph.
 
@@ -265,7 +265,7 @@ All stages are evaluated on the same held-out test set. Reported metrics:
 |---------|------------|
 | NONE dominates (80.6% of train tokens) | Weighted cross-entropy — mandatory; temper the weights (`α=0.5`), full inverse frequency over-predicts punctuation |
 | Train/test phrase leak | Split by document, not by sentence |
-| Off-by-one at document boundary | Drop boundary windows (chosen) or use `<PAD>` tokens |
+| Off-by-one at document boundary | Drop boundary windows (chosen) or use `<PAD>` tokens; at inference the input is padded with `<UNK>` instead, so no word is skipped |
 | Dead ReLU units | Xavier/He init, not `N(0,1)` |
 | Gradient explosion | Gradient clipping (good hygiene even in MLP) |
 
@@ -282,7 +282,7 @@ All stages are evaluated on the same held-out test set. Reported metrics:
 
 - **Runtime:** GNU Octave (`octave-cli`), MATLAB-syntax compatible.
 - **`.mat` files are committed** — pre-computed data is stored in the repo for reproducibility.
-- **Data flow:** `data/raw/*.txt` → `src/preprocess.m` → `data/processed/train.mat` + `val.mat` + `test.mat`; `src/train.m` → `vocab.mat` (built from train if missing) + `model.mat`.
+- **Data flow:** `data/raw/*.txt` → `src/preprocess.m` → `data/processed/train.mat` + `val.mat` + `test.mat`; `src/train.m` → `vocab.mat` (built from train if missing) + `model.mat`. `src/check.m` and `src/detect.m` are read-only consumers of `model.mat` + `vocab.mat`.
 - **Gotcha:** `vocab.mat` is built from the 7-book train set (post-validation-carve-out). The bigram baseline instead trains on train+val and rebuilds its vocab in-memory — do not "fix" it to use the committed `vocab.mat`.
 - **Tokenization:** lowercase full text → strip all chars except Polish letters (`a-ząćęłńóśźż`), whitespace, `,`, `.` → split on whitespace. Punctuation stays attached to preceding word (e.g. `"dom,"`, `"koniec."`).
 - **Gotcha:** source files are configured via `C_TRAIN_BOOKS`, `C_VAL_BOOKS`, and `C_TEST_BOOKS` in `src/config/settings.m`; hyperparameters live there too.

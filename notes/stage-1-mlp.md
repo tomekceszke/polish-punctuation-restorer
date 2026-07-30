@@ -237,8 +237,31 @@ Do not start training until this passes.
 | `src/tests/test_grad_check.m` | Numerical gradient verification |
 | `src/train.m` | Mini-batch SGD training loop, early stopping on val Macro-F1, saves `model.mat` |
 | `src/check.m` | Load `model.mat`, evaluate Macro-F1 on test |
+| `src/detect.m` | Interactive inference: prompt for text, restore `,` and `.` |
 
 Reused from Stage 0: `src/lib/metrics.m`, `data/processed/train.mat`, `test.mat`. `vocab.mat` is rebuilt by `train.m` (from the post-carve-out train set) if missing. Produced: `data/processed/model.mat` (best E, W1, b1, W2, b2 — committed).
+
+---
+
+## Inference on Arbitrary Text (`detect.m`)
+
+Training and evaluation consume `(word, label)` pairs that already exist. Inference has neither labels nor file input, which forces three decisions:
+
+**1. Input.** `tokenize` used to open a file itself, so it was unusable on a string typed by the user. It was split by responsibility: `tokenize(text)` is now pure string processing, and the `fopen`/`fread` half moved up into its only caller, `process.m`. `detect.m` reads the sentence with `input(prompt, 's')` — the `'s'` flag matters, without it Octave evaluates the input as an expression.
+
+**2. Labels that do not exist.** `build_windows` returns `[X_idx, y]` and indexes `labels(i)` while building. The labels never influence `X_idx` — they only produce `y` — so inference passes a dummy vector and discards `y`. It must be sized *after* padding: the loop reads up to `labels(length(word_indices) - k)`, so a vector of length n would run off the end.
+
+**3. Boundary words.** With windows dropped at the edges, the first and last `k` words get no prediction — including the final word, which is exactly where the sentence-ending period belongs. Fix: pad the index vector with `k` `<UNK>` indices at *both* ends. `n + 2k` indices produce `n + 2k - 2k = n` windows, and window `r` centres on padded position `r + k`, i.e. real word `r` — a clean 1:1 mapping with no off-by-one.
+
+The caveat is semantic: `<UNK>` means "word outside the vocabulary", not "text boundary". A dedicated `<PAD>` row in `E` would be the honest fix, but it requires retraining, so it is deferred.
+
+**Reconstruction** zips `words` with the predicted classes through a 3-element lookup table (`{'', ',', '.'}`, positions matching `C_LABELS`) and joins with spaces. Text the user already punctuated is stripped by `labelize` first, so the model always predicts from scratch rather than seeing its own answer in the input.
+
+**Known limitations** (accepted, not bugs):
+- Output is lower-cased — `tokenize` folds case and capitalisation is never restored.
+- The final word often gets NONE, because its right context is three `<UNK>`. Forcing a period there was considered and rejected: it is cosmetic post-processing that would have to be kept out of `check.m` anyway, since mixing product heuristics into the measurement inflates the reported metric.
+
+---
 
 > ✅ **Resolved open item (2026-06-15):** the validation set was carved out of the train documents — `C_VAL_BOOKS` = Ziemia Obiecana + 1984 (239,580 tokens, 20.0%) → `val.mat`. The test set stayed untouched, so the Stage 0 baseline numbers remain valid; the baseline itself now trains on train+val to keep its canonical 1,067,705-token corpus.
 
