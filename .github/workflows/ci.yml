@@ -119,3 +119,9 @@ jobs:
         run: |
           octave --norc --no-gui test_metrics.m
           echo "metrics: OK"
+
+      - name: Smoke test — post_process
+        working-directory: src/tests
+        run: |
+          octave --norc --no-gui test_post_process.m
+          echo "post_process: OK"

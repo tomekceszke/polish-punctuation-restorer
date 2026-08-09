@@ -66,9 +66,13 @@ while true
     end
     out_text = strjoin(out_words, ' ');
 
+    %   post-process
+    out_text = post_process(out_text);
+
     printf('\n  %s\n\n', out_text);
+    %   count the final text, not y_pred — post_process may close the sentence itself
     printf('%d word(s) · %d comma(s) · %d period(s)\n\n', ...
            length(words), ...
-           sum(y_pred == C_LABELS.COMMA), ...
-           sum(y_pred == C_LABELS.PERIOD));
+           sum(out_text == ','), ...
+           sum(out_text == '.'));
 end
