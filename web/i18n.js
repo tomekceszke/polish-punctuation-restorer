@@ -25,8 +25,9 @@ const STRINGS = {
     "how.s3.text": "Procedura powtarza się dla całego tekstu. Na końcu dostajesz ten sam tekst — tylko z interpunkcją na swoim miejscu.",
 
     "books.title": "Wytrenowany na klasyce",
-    "books.lead": "Model uczył się interpunkcji z ~1,2 miliona słów literackiej polszczyzny — lektur, które każdy zna ze szkoły.",
-    "books.trainLabel": "zbiór treningowy · 9 książek",
+    "books.lead": "Model uczył się interpunkcji z ~1,07 miliona słów literackiej polszczyzny — lektur, które każdy zna ze szkoły.",
+    "books.trainLabel": "zbiór treningowy · 7 książek",
+    "books.valLabel": "zbiór walidacyjny · 2 książki",
     "books.testLabel": "zbiór testowy · 2 książki",
     "books.credit": 'Teksty pochodzą z biblioteki <a href="https://wolnelektury.pl" target="_blank" rel="noopener">Wolne Lektury</a>.',
 
@@ -80,8 +81,9 @@ const STRINGS = {
     "how.s3.text": "The procedure repeats across the whole text. You get the same text back — with the punctuation where it belongs.",
 
     "books.title": "Trained on the classics",
-    "books.lead": "The model learned punctuation from ~1.2 million words of literary Polish — the books every Polish school kid knows.",
-    "books.trainLabel": "training set · 9 books",
+    "books.lead": "The model learned punctuation from ~1.07 million words of literary Polish — the books every Polish school kid knows.",
+    "books.trainLabel": "training set · 7 books",
+    "books.valLabel": "validation set · 2 books",
     "books.testLabel": "test set · 2 books",
     "books.credit": 'Texts come from the <a href="https://wolnelektury.pl" target="_blank" rel="noopener">Wolne Lektury</a> free library.',
 

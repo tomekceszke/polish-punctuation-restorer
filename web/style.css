@@ -347,12 +347,13 @@ a { color: inherit; }
   color: var(--ink-soft);
   margin: 0 0 1rem;
 }
+.books-group-val,
 .books-group-test {
   margin-top: 2.5rem;
   padding-top: 1.75rem;
   border-top: 1px dashed var(--line);
-  color: var(--accent);
 }
+.books-group-test { color: var(--accent); }
 
 .books-grid {
   display: grid;
