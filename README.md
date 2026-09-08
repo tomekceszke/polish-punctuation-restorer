@@ -4,6 +4,8 @@
 
 🤗 **Model on Hugging Face:** [tomekceszke/polish-punctuation-restorer](https://huggingface.co/tomekceszke/polish-punctuation-restorer) — weights, model card and a portable (`scipy`-readable) export.
 
+📊 **Corpus on Hugging Face:** [tomekceszke/polish-punctuation-corpus](https://huggingface.co/datasets/tomekceszke/polish-punctuation-corpus) — 1.2M `(word, label)` pairs, split by document.
+
 An educational project — building a sequential punctuation classifier from scratch in GNU Octave, deriving all math by hand and implementing backprop manually on matrices. No external ML libraries.
 
 **Task:** given a Polish word, predict the punctuation mark that follows it: none, comma, or period.
@@ -119,6 +121,8 @@ ppr/
 │   └── utils/
 │       ├── epub2txt.py      # Convert .epub → .txt (stdlib only)
 │       ├── export_hf.m      # Export weights as MATLAB v7 (.mat) + vocab.txt
+│       ├── export_dataset.m # Export (word, label) splits as CSV for the HF dataset repo
+│       ├── csv2parquet.py   # Convert those CSVs to Parquet (needs pyarrow)
 │       └── build_hf.sh      # Assemble hf/ — the Hugging Face upload bundle
 ├── notes/
 │   ├── learning-plan.md          # Full learning curriculum
@@ -128,7 +132,8 @@ ppr/
 │   ├── stage-1-mlp.md            # MLP architecture, formulas, gradient check
 │   └── hugging-face.md           # HF model repo: contents + update ritual
 ├── paper/                        # Academic write-up (WIP)
-├── hf/                           # Hugging Face staging (generated; card + SOURCES.md tracked)
+├── hf/                           # Hugging Face model repo staging (generated; card + SOURCES.md tracked)
+├── hf-dataset/                   # Hugging Face dataset repo staging (generated; card tracked)
 ```
 
 ---

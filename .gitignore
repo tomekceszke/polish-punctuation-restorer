@@ -24,3 +24,5 @@ octave-workspace
 hf/*
 !hf/README.md
 !hf/SOURCES.md
+hf-dataset/*
+!hf-dataset/README.md

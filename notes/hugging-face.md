@@ -3,10 +3,15 @@
 The model is mirrored at
 [huggingface.co/tomekceszke/polish-punctuation-restorer](https://huggingface.co/tomekceszke/polish-punctuation-restorer).
 
-It is a **model repo only** — no dataset repo, no Space (a Space would need the forward pass
-rewritten in Python, since Octave does not run there). GitHub stays the single source of truth for
-training code, notes and the paper; Hugging Face carries the weights, the model card and the
-progress log.
+Two repos, no Space (a Space would need the forward pass rewritten in Python, since Octave does not
+run there):
+
+- **model:** `tomekceszke/polish-punctuation-restorer` — weights, model card, progress log
+- **dataset:** `tomekceszke/polish-punctuation-corpus` — the processed `(word, label)` pairs
+
+GitHub stays the single source of truth for training code, notes and the paper. The model card
+declares `datasets:` and a `model-index` block, so the Hub links the corpus and renders the test
+Macro-F1 as a native evaluation result.
 
 ## What lives there
 
@@ -22,6 +27,11 @@ and git-ignored:
 | `inference/` | Minimal Octave bundle: `mlp_forward.m`, `detect.m` (paths rewritten), `lib/`, `config/` |
 
 Training code (`train.m`, `mlp_backward.m`, `notes/`, `paper/`) is deliberately **not** copied.
+
+`hf-dataset/` is the dataset staging directory: `src/utils/export_dataset.m` writes one CSV per
+split, then `src/utils/csv2parquet.py` converts them to Parquet and deletes the CSVs (the Hub's
+dataset viewer reads Parquet directly). That script is the project's only non-stdlib Python
+dependency — `pip install pyarrow`. Only `hf-dataset/README.md` is tracked in git.
 
 ## Why `model_v7.mat` exists
 
@@ -43,6 +53,16 @@ hf upload tomekceszke/polish-punctuation-restorer ../hf . \
     --commit-message "Stage N: <architecture>, Macro-F1 <value>"
 ```
 
+Also bump `value:` in the `model-index` block of `hf/README.md`. The corpus only needs a re-upload
+if preprocessing changed:
+
+```bash
+octave-cli utils/export_dataset.m
+python3 utils/csv2parquet.py
+hf upload tomekceszke/polish-punctuation-corpus ../hf-dataset . --repo-type dataset \
+    --commit-message "<what changed>"
+```
+
 The HF commit message is the entry in the public timeline, so name the stage in it.
 
 ## One-time setup
@@ -51,7 +71,14 @@ The HF commit message is the entry in the public timeline, so name the stage in 
 brew install hf                 # the CLI is `hf` (formerly huggingface-cli)
 hf auth login                   # interactive; needs a write token from
                                 # https://huggingface.co/settings/tokens
-hf repo create polish-punctuation-restorer --type model
+hf repos create polish-punctuation-restorer --repo-type model
+hf repos create polish-punctuation-corpus --repo-type dataset
 ```
 
 Files are small (~6.5 MB total), so `git-lfs` is not needed.
+
+## Not done yet
+
+A **collection** grouping the model and the corpus was blocked by a Hub rate limit:
+`429 ... You have exceeded the rate limit for collection creation (0 per day). As a new user, your
+quotas will increase progressively over time.` Retry once the account has aged.

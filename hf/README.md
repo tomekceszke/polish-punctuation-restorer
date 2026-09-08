@@ -13,6 +13,22 @@ tags:
   - no-framework
 metrics:
   - f1
+datasets:
+  - tomekceszke/polish-punctuation-corpus
+model-index:
+  - name: polish-punctuation-restorer
+    results:
+      - task:
+          type: token-classification
+          name: Punctuation restoration
+        dataset:
+          type: tomekceszke/polish-punctuation-corpus
+          name: Polish Punctuation Corpus (Wolne Lektury)
+          split: test
+        metrics:
+          - type: f1
+            name: Test Macro-F1
+            value: 0.6077
 ---
 
 # Polish Punctuation Restorer — Stage 1 (MLP from scratch)
@@ -107,7 +123,8 @@ Each row is a closed stage. The table grows; the metric is meant to grow with it
 ## Training data
 
 11 Polish literary works from [Wolne Lektury](https://wolnelektury.pl) — public domain or Free Art
-License 1.3, translations included. Document-level split: 69.2% train / 20.0% validation / 10.7%
+License 1.3, translations included. The processed word/label pairs are published as
+[tomekceszke/polish-punctuation-corpus](https://huggingface.co/datasets/tomekceszke/polish-punctuation-corpus). Document-level split: 69.2% train / 20.0% validation / 10.7%
 test, so no phrase leaks across the boundary. Full attribution, with translators and per-work
 licences, is in [`SOURCES.md`](SOURCES.md).
 
@@ -174,6 +191,7 @@ snippet above is the raw prediction.
 
 ## Links
 
+- **Training corpus:** <https://huggingface.co/datasets/tomekceszke/polish-punctuation-corpus>
 - **Code and full write-up:** <https://github.com/tomekceszke/polish-punctuation-restorer>
 - **Project page:** <https://tomek.ceszke.com/polish-punctuation-restorer/>
 - **Derivations and stage notes:** [`notes/`](https://github.com/tomekceszke/polish-punctuation-restorer/tree/main/notes)
