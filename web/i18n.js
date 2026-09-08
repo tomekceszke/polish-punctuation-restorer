@@ -52,6 +52,7 @@ const STRINGS = {
     "links.title": "Publikacja i kod",
     "links.paperKicker": "artykuł naukowy (draft)",
     "links.repoKicker": "kod źródłowy · MIT",
+    "links.hfKicker": "wagi modelu · Hugging Face",
 
     "footer.line1": "Projekt badawczo-edukacyjny · etap 1 z 5 · wyniki będą się poprawiać z każdym etapem.",
     "footer.ai": "Rola AI: cała matematyka i kod modelu napisane ręcznie przez autora. AI pełniło rolę mentora — pytania i wskazówki, bez gotowego kodu. Z pomocą AI powstała natomiast ta strona.",
@@ -108,6 +109,7 @@ const STRINGS = {
     "links.title": "Paper & code",
     "links.paperKicker": "research paper (draft)",
     "links.repoKicker": "source code · MIT",
+    "links.hfKicker": "model weights · Hugging Face",
 
     "footer.line1": "A research & educational project · stage 1 of 5 · results improve with every stage.",
     "footer.ai": "AI's role: all the math and model code were written by hand by the author. AI served as a mentor — questions and hints, no ready-made code. This website, however, was built with AI assistance.",

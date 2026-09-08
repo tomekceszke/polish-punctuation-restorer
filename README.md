@@ -2,6 +2,8 @@
 
 🌐 **Website:** [tomek.ceszke.com/polish-punctuation-restorer](https://tomek.ceszke.com/polish-punctuation-restorer/)
 
+🤗 **Model on Hugging Face:** [tomekceszke/polish-punctuation-restorer](https://huggingface.co/tomekceszke/polish-punctuation-restorer) — weights, model card and a portable (`scipy`-readable) export.
+
 An educational project — building a sequential punctuation classifier from scratch in GNU Octave, deriving all math by hand and implementing backprop manually on matrices. No external ML libraries.
 
 **Task:** given a Polish word, predict the punctuation mark that follows it: none, comma, or period.
@@ -115,14 +117,18 @@ ppr/
 │   │   └── metrics.m        # Confusion matrix, precision/recall/F1 per class
 │   ├── tests/               # Smoke tests + numerical gradient check (run in CI)
 │   └── utils/
-│       └── epub2txt.py      # Convert .epub → .txt (stdlib only)
+│       ├── epub2txt.py      # Convert .epub → .txt (stdlib only)
+│       ├── export_hf.m      # Export weights as MATLAB v7 (.mat) + vocab.txt
+│       └── build_hf.sh      # Assemble hf/ — the Hugging Face upload bundle
 ├── notes/
 │   ├── learning-plan.md          # Full learning curriculum
 │   ├── stage-0-preprocess.md     # Preprocessing design + train/test split
 │   ├── stage-0-bigram-baseline.md # Theory + implementation reference
 │   ├── stage-0-results.md        # Baseline results: confusion matrix, F1 per class
-│   └── stage-1-mlp.md            # MLP architecture, formulas, gradient check
+│   ├── stage-1-mlp.md            # MLP architecture, formulas, gradient check
+│   └── hugging-face.md           # HF model repo: contents + update ritual
 ├── paper/                        # Academic write-up (WIP)
+├── hf/                           # Hugging Face staging (generated; card + SOURCES.md tracked)
 ```
 
 ---
