@@ -71,3 +71,31 @@ A document either belongs entirely to train or entirely to test. Never mix token
 - **Last token of a document** — there is no next word. Assign NONE and handle the boundary explicitly, or discard the last token per document.
 - **Abbreviations** — "ul.", "dr.", "nr." end with a period but are not sentence endings. At this stage it is acceptable to treat them as PERIOD and note it as a known limitation.
 - **Multiple punctuation** — "...'" or "?!" — decide on a rule (take the first, take the last) and apply it consistently.
+
+---
+
+## Open item — ellipsis residue in the corpus (measured 2026-09-09, undecided)
+
+`labelize.m` strips exactly **one** trailing mark, so an ellipsis written as `...` leaves the rest
+of it glued to the word: `"co.."` labelled PERIOD, `"odmówią.."`, `"siedzi.."`. Measured while
+exporting the corpus for Hugging Face: **16,204 of 828,125 train tokens (~2%)** still contain a
+`,` or `.` inside the word string.
+
+Consequences:
+
+- `co` and `co..` are two different vocabulary entries competing for the same top-5000 slots.
+- Almost every such token falls outside the vocabulary anyway and ends up as `<UNK>`, so the
+  window carries less signal exactly where a sentence ends.
+- The PERIOD class — already the weakest at F1 0.3811 — is the one polluted by it.
+
+Options, none applied yet:
+
+1. Strip **all** trailing `,` and `.` characters, label by the first one removed.
+2. Collapse `...` to a single `.` during tokenisation, before labelling.
+3. Leave it and treat it as corpus noise.
+
+Any of the first two changes the training data, so it means retraining and a new Stage 1 number —
+that is why nothing was touched. The published corpus and the published weights match the code as
+it stands today; the artefact is documented in the Hugging Face dataset card. Decide this before
+Stage 2, so the sequence model is not trained on the same noise.
+
