@@ -79,6 +79,11 @@ Files are small (~6.5 MB total), so `git-lfs` is not needed.
 
 ## Not done yet
 
-A **collection** grouping the model and the corpus was blocked by a Hub rate limit:
+A **collection** grouping the model and the corpus is blocked by a Hub rate limit:
 `429 ... You have exceeded the rate limit for collection creation (0 per day). As a new user, your
-quotas will increase progressively over time.` Retry once the account has aged.
+quotas will increase progressively over time.`
+
+The limit is literally `0 per day`, so the account does not have the permission yet rather than
+having spent a daily allowance. Retried 2026-09-09 with the same result; everything else (repo
+creation, uploads) works. Retry when the account has aged, or ask for access at
+`website@huggingface.co`, which the error message itself suggests.
