@@ -8,21 +8,22 @@
    =========================================================================== */
 
 :root {
-  --band: #1e2f9e;
-  --band-deep: #172579;
-  --band-line: rgba(238, 241, 255, 0.22);
-  --band-ink: #eef1ff;
-  --gold: #ffcf3d;
+  --band: #17140f;
+  --band-deep: #231e17;
+  --band-line: rgba(250, 247, 242, 0.18);
+  --band-ink: #faf7f2;
+  --band-accent: #ff5a4d;   /* red as it reads on black */
+  --band-btn: #e63b2e;
 
-  --paper: #e7e9f1;
-  --paper-2: #dfe2ec;
-  --ink: #131a3f;
-  --ink-soft: #4a5278;
-  --rule: #c3c8dc;
-  --accent: #1e2f9e;
+  --paper: #faf7f2;
+  --paper-2: #f1ece2;
+  --ink: #17140f;
+  --ink-soft: #5c564c;
+  --rule: #e5dfd4;
+  --accent: #e63b2e;
 
-  --c-comma: #2f46bd;   /* chart series, validated on --paper */
-  --c-period: #a67c00;
+  --c-comma: #e63b2e;   /* chart series, validated on --paper */
+  --c-period: #2b6cb0;
 
   --display: Archivo, "Helvetica Neue", Arial, sans-serif;
   --text: Newsreader, Georgia, "Times New Roman", serif;
@@ -34,14 +35,16 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --paper: #0f1430;
-    --paper-2: #161c3d;
-    --ink: #e6e8f4;
-    --ink-soft: #a4abcc;
-    --rule: #2b3360;
-    --accent: #ffcf3d;
-    --c-comma: #6f86ff;  /* validated on the dark paper */
-    --c-period: #b38900;
+    --band: #0e0c09;
+    --band-deep: #1a1611;
+    --paper: #14110c;
+    --paper-2: #1e1a14;
+    --ink: #f1ece2;
+    --ink-soft: #a89f8f;
+    --rule: #2e2921;
+    --accent: #ff5a4d;
+    --c-comma: #e8503f;  /* validated on the dark paper */
+    --c-period: #4f93da;
   }
 }
 
@@ -74,12 +77,13 @@ code {
 
 /* Punctuation motif: only h1 and h2 carry [data-punct] */
 .punct { color: var(--accent); }
-.band .punct { color: var(--gold); }
+.band .punct { color: var(--band-accent); }
 
 /* ===== Band ===== */
 .band {
   background: var(--band);
   color: var(--band-ink);
+  border-bottom: 1px solid var(--band-line);
 }
 .band .wrap { padding-block: 1.6rem 3.5rem; }
 
@@ -105,7 +109,7 @@ code {
   text-underline-offset: 4px;
 }
 .lang-toggle:hover { text-decoration-color: currentColor; }
-.lang-toggle:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; }
+.lang-toggle:focus-visible { outline: 2px solid var(--band-accent); outline-offset: 3px; }
 
 .headline {
   font-family: var(--display);
@@ -153,7 +157,7 @@ code {
 }
 .demo:not(.is-live) .demo-box { cursor: text; }
 .demo-box:focus,
-.demo-box:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; border-color: var(--gold); }
+.demo-box:focus-visible { outline: 2px solid var(--band-accent); outline-offset: 2px; border-color: var(--band-accent); }
 
 .demo.is-live .demo-box.is-empty::before {
   content: attr(data-placeholder);
@@ -165,7 +169,7 @@ code {
   display: inline-block;
   width: 2px;
   height: 1.1em;
-  background: var(--gold);
+  background: var(--band-accent);
   vertical-align: text-bottom;
   animation: blink 0.9s steps(1) infinite;
 }
@@ -173,7 +177,7 @@ code {
 
 .demo-box .mark {
   display: inline-block;
-  color: var(--gold);
+  color: var(--band-accent);
   font-weight: 600;
   width: 0;
   opacity: 0;
@@ -200,8 +204,8 @@ code {
   padding: 0.7rem 1.3rem;
   border: 0;
   border-radius: 3px;
-  background: var(--gold);
-  color: #131a3f;
+  background: var(--band-btn);
+  color: #fff;
   cursor: default;
   pointer-events: none;
   opacity: 0.55;
@@ -226,14 +230,14 @@ code {
   display: inline-block;
   width: 0.8em; height: 0.8em;
   margin-left: 0.45em;
-  border: 2px solid var(--gold);
+  border: 2px solid var(--band-accent);
   border-top-color: transparent;
   border-radius: 50%;
   vertical-align: -0.1em;
   animation: spin 0.7s linear infinite;
 }
 @keyframes spin { to { transform: rotate(360deg); } }
-.demo-status.error { color: var(--gold); font-style: normal; opacity: 1; }
+.demo-status.error { color: var(--band-accent); font-style: normal; opacity: 1; }
 
 .demo-count {
   margin-left: auto;
@@ -242,7 +246,7 @@ code {
   font-variant-numeric: tabular-nums;
   opacity: 0.8;
 }
-.demo-count.over { color: var(--gold); opacity: 1; }
+.demo-count.over { color: var(--band-accent); opacity: 1; }
 
 .demo-foot {
   display: grid;
@@ -499,6 +503,7 @@ figcaption, .credit {
 .colophon {
   background: var(--band);
   color: var(--band-ink);
+  border-top: 1px solid var(--band-line);
 }
 .colophon .wrap {
   padding-block: 2rem 2.6rem;
