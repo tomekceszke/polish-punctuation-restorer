@@ -14,14 +14,14 @@
 </head>
 <body>
 
-<header class="band">
+<header class="band" data-punct>
   <div class="wrap">
     <div class="masthead">
       <a class="brand" href="#"><span class="brand-mark" aria-hidden="true">,</span>Polish Punctuation Restorer</a>
       <button class="lang-toggle" id="langToggle" aria-label="Switch language">English</button>
     </div>
 
-    <h1 class="headline" data-punct data-i18n-html="mag.h1">Sieć, która stawia przecinki.<br>Napisana od zera w Octave.</h1>
+    <h1 class="headline" data-i18n-html="mag.h1">Sieć, która stawia przecinki.<br>Napisana od zera w Octave.</h1>
     <p class="deck" data-i18n="mag.deck">Perceptron wielowarstwowy z ręcznie wyprowadzonym backpropem.</p>
     <p class="byline" data-i18n="mag.byline">Tomasz Ceszke, 2026</p>
 
@@ -50,12 +50,12 @@
   </div>
 </header>
 
-<main class="article">
+<main class="article" data-punct>
   <div class="wrap">
 
     <!-- ===== Task ===== -->
     <section class="sec">
-      <h2 data-punct data-i18n="mag.task.title">Zadanie</h2>
+      <h2 data-i18n="mag.task.title">Zadanie</h2>
       <div class="body">
         <p data-i18n="mag.task.p1">Klasyfikacja tokenów.</p>
         <p data-i18n="mag.task.p2">Tokenizer składa wielkość liter.</p>
@@ -81,7 +81,7 @@
 
     <!-- ===== Data ===== -->
     <section class="sec">
-      <h2 data-punct data-i18n="mag.data.title">Dane</h2>
+      <h2 data-i18n="mag.data.title">Dane</h2>
       <div class="body">
         <p data-i18n="mag.data.p1">Jedenaście książek z Wolnych Lektur.</p>
         <p data-i18n="mag.data.p2">Rozkład etykiet jest silnie niezbalansowany.</p>
@@ -132,7 +132,7 @@
 
     <!-- ===== Model ===== -->
     <section class="sec">
-      <h2 data-punct data-i18n="mag.model.title">Model</h2>
+      <h2 data-i18n="mag.model.title">Model</h2>
 
       <figure class="wide arch" aria-label="Architecture: 7 indices, embedding lookup, concatenation to 350, hidden layer 128 with ReLU, softmax over 3 classes">
         <svg viewBox="0 0 1200 290" xmlns="http://www.w3.org/2000/svg" role="img">
@@ -265,7 +265,7 @@
 
     <!-- ===== Results ===== -->
     <section class="sec">
-      <h2 data-punct data-i18n="mag.results.title">Wyniki</h2>
+      <h2 data-i18n="mag.results.title">Wyniki</h2>
       <div class="body">
         <p data-i18n="mag.results.p1">Metryka to Macro-F1 na zbiorze testowym.</p>
         <div class="table-wrap">
@@ -302,7 +302,7 @@
         </div>
       </aside>
 
-      <blockquote class="pull wide" data-punct data-i18n="mag.results.quote">Pojemność modelu nie była wąskim gardłem. Była nim precyzja rzadkich klas.</blockquote>
+      <blockquote class="pull wide" data-i18n="mag.results.quote">Pojemność modelu nie była wąskim gardłem. Była nim precyzja rzadkich klas.</blockquote>
 
       <div class="body">
         <div class="table-wrap">
@@ -333,7 +333,7 @@
 
     <!-- ===== Next ===== -->
     <section class="sec">
-      <h2 data-punct data-i18n="mag.next.title">Dalej</h2>
+      <h2 data-i18n="mag.next.title">Dalej</h2>
       <ol class="stages wide" start="0">
         <li class="past"><span data-i18n="mag.next.s0">Preprocessing i baza bigramowa</span><span class="state" data-i18n="mag.next.done">zrobione</span></li>
         <li class="past"><span data-i18n="mag.next.s1">MLP, ręczny backprop</span><span class="state" data-i18n="mag.next.done">zrobione</span></li>
@@ -346,7 +346,7 @@
 
     <!-- ===== Links ===== -->
     <section class="sec">
-      <h2 data-punct data-i18n="mag.links.title">Kod, wagi, korpus, artykuł</h2>
+      <h2 data-i18n="mag.links.title">Kod, wagi, korpus, artykuł</h2>
       <dl class="refs wide">
         <div>
           <dt><a href="https://github.com/tomekceszke/polish-punctuation-restorer" target="_blank" rel="noopener" data-i18n="mag.links.repo">Repozytorium</a></dt>
@@ -370,7 +370,7 @@
   </div>
 </main>
 
-<footer class="colophon">
+<footer class="colophon" data-punct>
   <div class="wrap">
     <p data-i18n="mag.footer.ai">Matematyka i kod modelu: ręcznie.</p>
     <p class="meta" data-i18n-html="mag.footer.meta"><a href="https://tomek.ceszke.com/">Tomasz Ceszke</a>, 2026, licencja MIT.</p>
