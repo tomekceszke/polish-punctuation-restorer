@@ -4,10 +4,10 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="ppr-build" content="dev">
-  <title>Polish Punctuation Restorer — przecinki wracają na miejsce</title>
-  <meta name="description" content="Sieć neuronowa, która uzupełnia brakujące przecinki i kropki w polskim tekście. Projekt badawczy zbudowany od zera, wytrenowany na szkolnych lekturach.">
+  <title>Polish Punctuation Restorer</title>
+  <meta name="description" content="Sieć neuronowa, która uzupełnia brakujące przecinki i kropki w polskim tekście. Napisana od zera w GNU Octave, z ręcznie wyprowadzonym backpropem, bez bibliotek ML.">
   <meta property="og:title" content="Polish Punctuation Restorer">
-  <meta property="og:description" content="Wklej tekst. Odzyskaj przecinki. Sieć neuronowa wytrenowana na polskich lekturach.">
+  <meta property="og:description" content="Sieć, która stawia przecinki. Napisana od zera w Octave. Działa w przeglądarce.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://tomek.ceszke.com/polish-punctuation-restorer/">
   <meta property="og:site_name" content="Polish Punctuation Restorer">
@@ -37,179 +37,377 @@
   </script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&family=Lora:ital@0;1&display=swap" rel="stylesheet">
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='80' font-size='90' fill='%23e63b2e'>,</text></svg>">
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wdth,wght@0,62..125,400..900&family=Newsreader:ital,opsz,wght@0,6..72,400..600;1,6..72,400&display=swap" rel="stylesheet">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%2317140f'/><text y='80' x='22' font-size='90' fill='%23ff5a4d'>,</text></svg>">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<header class="site-header">
-  <a class="logo" href="#" aria-label="Polish Punctuation Restorer">
-    <span class="logo-mark">,</span><span class="logo-dot">.</span><span class="logo-text">ppr</span>
-  </a>
-  <button class="lang-toggle" id="langToggle" aria-label="Switch language">EN</button>
-</header>
+<header class="band" data-punct>
+  <div class="wrap">
+    <div class="masthead">
+      <a class="brand" href="#"><span class="brand-mark" aria-hidden="true">,</span>Polish Punctuation Restorer</a>
+      <button class="lang-toggle" id="langToggle" aria-label="Switch language">English</button>
+    </div>
 
-<main>
+    <h1 class="headline" data-i18n-html="mag.h1">Sieć, która stawia przecinki.<br>Napisana od zera w Octave.</h1>
+    <p class="deck" data-i18n="mag.deck">Perceptron wielowarstwowy z ręcznie wyprowadzonym backpropem.</p>
+    <p class="byline" data-i18n="mag.byline">Tomasz Ceszke, 2026</p>
 
-  <!-- ============ HERO ============ -->
-  <section class="hero">
-    <div class="hero-net" id="heroNet" aria-hidden="true"></div>
-    <div class="hero-glyph" aria-hidden="true">,</div>
-    <h1 class="hero-title" data-i18n-html="hero.title">Wklej tekst<span class="accent">.</span><br>Odzyskaj przecinki<span class="accent">.</span></h1>
-    <p class="hero-sub" data-i18n="hero.sub">Ręcznie napisana od zera sieć neuronowa, która czyta Twój tekst i stawia brakujące przecinki oraz kropki — wytrenowana na klasyce szkolnych lektur.</p>
-    <ul class="craft-badges" aria-label="Cechy projektu">
-      <li data-i18n="hero.b1">100% hand-crafted</li>
-      <li data-i18n="hero.b2">vintage · architektura 1986</li>
-      <li data-i18n="hero.b3">dojrzewała na klasykach</li>
-      <li data-i18n="hero.b4">bez sztucznych dodatków</li>
-    </ul>
-    <a class="hero-cta" href="#demo" data-i18n="hero.cta">Zobacz, jak działa ↓</a>
-  </section>
-
-  <!-- ============ DEMO ============ -->
-  <section class="section demo-section" id="demo">
-    <h2 class="section-title" data-i18n="demo.title">Tekst bez interpunkcji? Chwileczkę.</h2>
     <div class="demo" id="demoPanel">
-      <div class="demo-box" id="demoBox" aria-live="polite"></div>
+      <div class="demo-box" id="demoBox" lang="pl" aria-live="polite"></div>
       <div class="demo-actions">
         <button class="demo-btn" id="demoBtn" tabindex="-1" data-i18n="demo.button">Uzupełnij znaki</button>
         <span class="demo-status" id="demoStatus"></span>
         <span class="demo-count" id="demoCount"></span>
       </div>
-      <p class="demo-note" data-i18n="demo.note">Kliknij w ramkę i wpisz własny tekst — model policzy się w Twojej przeglądarce, bez serwera.</p>
     </div>
-  </section>
 
-  <!-- ============ HOW IT WORKS ============ -->
-  <section class="section">
-    <h2 class="section-title" data-i18n="how.title">Jak to działa?</h2>
-    <div class="steps">
-      <div class="step">
-        <div class="step-num">1</div>
-        <h3 data-i18n="how.s1.title">Czyta kontekst 7 słów</h3>
-        <p data-i18n="how.s1.text">Model patrzy na każde słowo w kontekście — trzy słowa przed nim i trzy po nim. Tak jak człowiek, który nie stawia przecinka w ciemno.</p>
+    <div class="demo-foot">
+      <div>
+        <p class="demo-note" data-i18n="demo.note">Kliknij w ramkę i wpisz własny tekst.</p>
+        <aside class="repo">
+          <h3><a href="https://github.com/tomekceszke/polish-punctuation-restorer" target="_blank" rel="noopener" data-i18n="mag.repo.title">Kod na GitHubie</a></h3>
+          <p data-i18n="mag.repo.text">Cały potok w Octave.</p>
+        </aside>
       </div>
-      <div class="step">
-        <div class="step-num">2</div>
-        <h3 data-i18n="how.s2.title">Sieć zgaduje znak</h3>
-        <p data-i18n="how.s2.text">Sieć neuronowa ocenia, co powinno stać po danym słowie: nic, przecinek czy kropka. Nauczyła się tego z ponad miliona słów prozy.</p>
+      <aside>
+        <h3 data-i18n="mag.browser.title">W przeglądarce</h3>
+        <p data-i18n="mag.browser.text">Bez serwera.</p>
+      </aside>
+    </div>
+  </div>
+</header>
+
+<main class="article" data-punct>
+  <div class="wrap">
+
+    <!-- ===== Task ===== -->
+    <section class="sec">
+      <h2 data-i18n="mag.task.title">Zadanie</h2>
+      <div class="body">
+        <p data-i18n="mag.task.p1">Klasyfikacja tokenów.</p>
+        <p data-i18n="mag.task.p2">Tokenizer składa wielkość liter.</p>
       </div>
-      <div class="step">
-        <div class="step-num">3</div>
-        <h3 data-i18n="how.s3.title">I tak słowo po słowie</h3>
-        <p data-i18n="how.s3.text">Procedura powtarza się dla całego tekstu. Na końcu dostajesz ten sam tekst — tylko z interpunkcją na swoim miejscu.</p>
+      <aside>
+        <h3 data-i18n="mag.task.asideTitle">Etykiety</h3>
+        <div class="table-wrap">
+          <table>
+            <thead><tr>
+              <th data-i18n="mag.task.thLabel">Etykieta</th>
+              <th data-i18n="mag.task.thValue">Wartość</th>
+              <th class="txt" data-i18n="mag.task.thMeaning">Znaczenie</th>
+            </tr></thead>
+            <tbody>
+              <tr><td><code>NONE</code></td><td>1</td><td class="txt" data-i18n="mag.task.rNone">brak znaku po słowie</td></tr>
+              <tr><td><code>COMMA</code></td><td>2</td><td class="txt" data-i18n="mag.task.rComma">przecinek po słowie</td></tr>
+              <tr><td><code>PERIOD</code></td><td>3</td><td class="txt" data-i18n="mag.task.rPeriod">kropka po słowie</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </aside>
+    </section>
+
+    <!-- ===== Data ===== -->
+    <section class="sec">
+      <h2 data-i18n="mag.data.title">Dane</h2>
+      <div class="body">
+        <p data-i18n="mag.data.p1">Jedenaście książek z Wolnych Lektur.</p>
+        <p data-i18n="mag.data.p2">Rozkład etykiet jest silnie niezbalansowany.</p>
       </div>
-    </div>
-  </section>
-
-  <!-- ============ BOOKS ============ -->
-  <section class="section books-section">
-    <h2 class="section-title" data-i18n="books.title">Wytrenowany na klasyce</h2>
-    <p class="section-lead" data-i18n="books.lead">Model uczył się interpunkcji z ~1,07 miliona słów literackiej polszczyzny — lektur, które każdy zna ze szkoły.</p>
-    <p class="books-group-label" data-i18n="books.trainLabel">zbiór treningowy · 7 książek</p>
-    <div class="books-grid">
-      <div class="book"><span class="book-title">Chłopi</span><span class="book-author">Władysław Reymont</span></div>
-      <div class="book"><span class="book-title">Lalka</span><span class="book-author">Bolesław Prus</span></div>
-      <div class="book"><span class="book-title">Nad Niemnem</span><span class="book-author">Eliza Orzeszkowa</span></div>
-      <div class="book"><span class="book-title">Proces</span><span class="book-author">Franz Kafka</span></div>
-      <div class="book"><span class="book-title">Przedwiośnie</span><span class="book-author">Stefan Żeromski</span></div>
-      <div class="book"><span class="book-title">Moralność pani Dulskiej</span><span class="book-author">Gabriela Zapolska</span></div>
-      <div class="book"><span class="book-title">Mały Książę</span><span class="book-author">Antoine de Saint-Exupéry</span></div>
-    </div>
-    <p class="books-group-label books-group-val" data-i18n="books.valLabel">zbiór walidacyjny · 2 książki</p>
-    <div class="books-grid">
-      <div class="book"><span class="book-title">Ziemia obiecana</span><span class="book-author">Władysław Reymont</span></div>
-      <div class="book"><span class="book-title">Rok 1984</span><span class="book-author">George Orwell</span></div>
-    </div>
-    <p class="books-group-label books-group-test" data-i18n="books.testLabel">zbiór testowy · 2 książki</p>
-    <div class="books-grid">
-      <div class="book"><span class="book-title">Syzyfowe prace</span><span class="book-author">Stefan Żeromski</span></div>
-      <div class="book"><span class="book-title">Tajemniczy ogród</span><span class="book-author">Frances H. Burnett</span></div>
-    </div>
-    <p class="books-credit" data-i18n-html="books.credit">Teksty pochodzą z biblioteki <a href="https://wolnelektury.pl" target="_blank" rel="noopener">Wolne Lektury</a>.</p>
-  </section>
-
-  <!-- ============ TECH ============ -->
-  <section class="section tech-section">
-    <h2 class="section-title" data-i18n="tech.title">Dla ciekawskich: co pod maską</h2>
-    <p class="section-lead" data-i18n="tech.lead">Wszystko zbudowane od zera w GNU Octave — bez bibliotek ML, z gradientami wyprowadzonymi ręcznie na kartce. Architektura w dobrym, starym stylu: MLP, rocznik 1986. Zero transformerów — na razie.</p>
-
-    <div class="facts-grid">
-      <div class="fact"><span class="fact-value">295,4&nbsp;tys.</span><span class="fact-label" data-i18n="tech.f1">parametrów</span></div>
-      <div class="fact"><span class="fact-value">0,608</span><span class="fact-label" data-i18n="tech.f2">Macro-F1 (test)</span></div>
-      <div class="fact"><span class="fact-value">+9,7&nbsp;pp</span><span class="fact-label" data-i18n="tech.f3">ponad bazę bigramową (0,511)</span></div>
-      <div class="fact"><span class="fact-value">0</span><span class="fact-label" data-i18n="tech.f4">użytych bibliotek ML</span></div>
-      <div class="fact"><span class="fact-value">645</span><span class="fact-label" data-i18n="tech.f5">linii kodu Octave</span></div>
-    </div>
-
-    <figure class="arch" aria-label="Architecture: 7-word window, embedding, hidden ReLU layer, softmax">
-      <div class="arch-flow">
-        <div class="arch-node">
-          <span class="arch-t1" data-i18n="tech.arch.in">okno 7 słów</span>
-          <span class="arch-t2">w₋₃ … w₊₃</span>
+      <aside>
+        <h3 data-i18n="mag.data.asideTitle">Podział</h3>
+        <div class="table-wrap">
+          <table>
+            <thead><tr>
+              <th data-i18n="mag.data.thSplit">Zbiór</th>
+              <th data-i18n="mag.data.thTokens">Tokeny</th>
+              <th data-i18n="mag.data.thBooks">Książki</th>
+            </tr></thead>
+            <tbody>
+              <tr><td data-i18n="mag.data.rTrain">treningowy</td><td data-i18n="mag.n.train">828 125</td><td>7</td></tr>
+              <tr><td data-i18n="mag.data.rVal">walidacyjny</td><td data-i18n="mag.n.val">239 580</td><td>2</td></tr>
+              <tr><td data-i18n="mag.data.rTest">testowy</td><td data-i18n="mag.n.test">128 235</td><td>2</td></tr>
+              <tr class="total"><td data-i18n="mag.data.rTotal">razem</td><td data-i18n="mag.n.total">1 195 940</td><td>11</td></tr>
+            </tbody>
+          </table>
         </div>
-        <div class="arch-link"></div>
-        <div class="arch-node">
-          <span class="arch-t1">embedding</span>
-          <span class="arch-t2">5000 × 50</span>
+        <p class="credit" data-i18n-html="mag.data.credit">Teksty pochodzą z biblioteki <a href="https://wolnelektury.pl" target="_blank" rel="noopener">Wolne Lektury</a>.</p>
+      </aside>
+
+      <figure class="wide">
+        <p class="fig-title" data-i18n="mag.data.figTitle">Udział etykiet w każdym zbiorze</p>
+        <div class="legend">
+          <span class="l-comma" data-i18n="mag.data.legComma">przecinek</span>
+          <span class="l-period" data-i18n="mag.data.legPeriod">kropka</span>
+          <span data-i18n="mag.data.legNone">reszta paska: brak znaku</span>
         </div>
-        <div class="arch-link"></div>
-        <div class="arch-node">
-          <span class="arch-t1" data-i18n="tech.arch.hidden">warstwa ukryta</span>
-          <span class="arch-t2">128 · ReLU</span>
+        <div class="bars" role="img" aria-label="Label share per split: train 11.9% comma, 7.3% period; validation 12.9% comma, 7.2% period; test 10.2% comma, 6.4% period">
+          <span class="lbl" data-i18n="mag.data.rTrain">treningowy</span>
+          <div class="track"><div class="seg comma" style="width:11.9%" title="COMMA 11.9%"></div><div class="seg period" style="width:7.3%" title="PERIOD 7.3%"></div></div>
+          <span class="val"><b data-i18n="mag.pct.tr.c">11,9%</b> <span data-i18n="mag.data.legComma">przecinek</span>, <b data-i18n="mag.pct.tr.p">7,3%</b> <span data-i18n="mag.data.legPeriod">kropka</span></span>
+
+          <span class="lbl" data-i18n="mag.data.rVal">walidacyjny</span>
+          <div class="track"><div class="seg comma" style="width:12.9%" title="COMMA 12.9%"></div><div class="seg period" style="width:7.2%" title="PERIOD 7.2%"></div></div>
+          <span class="val"><b data-i18n="mag.pct.va.c">12,9%</b> <span data-i18n="mag.data.legComma">przecinek</span>, <b data-i18n="mag.pct.va.p">7,2%</b> <span data-i18n="mag.data.legPeriod">kropka</span></span>
+
+          <span class="lbl" data-i18n="mag.data.rTest">testowy</span>
+          <div class="track"><div class="seg comma" style="width:10.2%" title="COMMA 10.2%"></div><div class="seg period" style="width:6.4%" title="PERIOD 6.4%"></div></div>
+          <span class="val"><b data-i18n="mag.pct.te.c">10,2%</b> <span data-i18n="mag.data.legComma">przecinek</span>, <b data-i18n="mag.pct.te.p">6,4%</b> <span data-i18n="mag.data.legPeriod">kropka</span></span>
         </div>
-        <div class="arch-link"></div>
-        <div class="arch-node arch-out">
-          <span class="arch-t1">softmax</span>
-          <span class="arch-t2">∅&nbsp;&nbsp;,&nbsp;&nbsp;.</span>
+        <figcaption data-i18n="mag.data.figCaption">Pasek to 100% tokenów zbioru.</figcaption>
+      </figure>
+    </section>
+
+    <!-- ===== Model ===== -->
+    <section class="sec">
+      <h2 data-i18n="mag.model.title">Model</h2>
+
+      <figure class="wide arch" aria-label="Architecture: 7 indices, embedding lookup, concatenation to 350, hidden layer 128 with ReLU, softmax over 3 classes">
+        <svg viewBox="0 0 1200 290" xmlns="http://www.w3.org/2000/svg" role="img">
+          <defs>
+            <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+              <path d="M0,0 L10,5 L0,10 z" fill="currentColor"/>
+            </marker>
+          </defs>
+
+          <!-- 7 indices -->
+          <g>
+            <rect class="box" x="20"  y="112" width="42" height="42" rx="3"/>
+            <rect class="box" x="68"  y="112" width="42" height="42" rx="3"/>
+            <rect class="box" x="116" y="112" width="42" height="42" rx="3"/>
+            <rect class="hi"  x="164" y="112" width="42" height="42" rx="3"/>
+            <rect class="box" x="212" y="112" width="42" height="42" rx="3"/>
+            <rect class="box" x="260" y="112" width="42" height="42" rx="3"/>
+            <rect class="box" x="308" y="112" width="42" height="42" rx="3"/>
+            <text class="sub m" x="41"  y="138" text-anchor="middle">w₋₃</text>
+            <text class="sub m" x="89"  y="138" text-anchor="middle">w₋₂</text>
+            <text class="sub m" x="137" y="138" text-anchor="middle">w₋₁</text>
+            <text class="sub m hi-text" x="185" y="138" text-anchor="middle">wᵢ</text>
+            <text class="sub m" x="233" y="138" text-anchor="middle">w₊₁</text>
+            <text class="sub m" x="281" y="138" text-anchor="middle">w₊₂</text>
+            <text class="sub m" x="329" y="138" text-anchor="middle">w₊₃</text>
+            <text class="lbl" x="185" y="184" text-anchor="middle" data-i18n="mag.arch.in">7 indeksów słownika</text>
+            <text class="small" x="185" y="202" text-anchor="middle">K = 3</text>
+          </g>
+          <line class="line" x1="358" y1="133" x2="392" y2="133" marker-end="url(#arr)"/>
+
+          <!-- E lookup -->
+          <g>
+            <rect class="box" x="400" y="38" width="64" height="190" rx="3"/>
+            <line class="row" x1="404" y1="61"  x2="460" y2="61"/>
+            <line class="row" x1="404" y1="92"  x2="460" y2="92"/>
+            <line class="row" x1="404" y1="118" x2="460" y2="118"/>
+            <line class="row" x1="404" y1="147" x2="460" y2="147"/>
+            <line class="row" x1="404" y1="166" x2="460" y2="166"/>
+            <line class="row" x1="404" y1="191" x2="460" y2="191"/>
+            <line class="row" x1="404" y1="213" x2="460" y2="213"/>
+            <text class="lbl m" x="432" y="252" text-anchor="middle">E</text>
+            <text class="small" x="432" y="270" text-anchor="middle">5001 × 50</text>
+            <text class="small" x="432" y="26" text-anchor="middle" data-i18n="mag.arch.lookup">wiersze E</text>
+          </g>
+          <line class="line" x1="472" y1="133" x2="506" y2="133" marker-end="url(#arr)"/>
+
+          <!-- concat 350 -->
+          <g>
+            <rect class="vec" x="514" y="122" width="196" height="22" rx="3"/>
+            <line class="thin" x1="542" y1="122" x2="542" y2="144"/>
+            <line class="thin" x1="570" y1="122" x2="570" y2="144"/>
+            <line class="thin" x1="598" y1="122" x2="598" y2="144"/>
+            <line class="thin" x1="626" y1="122" x2="626" y2="144"/>
+            <line class="thin" x1="654" y1="122" x2="654" y2="144"/>
+            <line class="thin" x1="682" y1="122" x2="682" y2="144"/>
+            <text class="lbl m" x="612" y="106" text-anchor="middle">x</text>
+            <text class="small" x="612" y="170" text-anchor="middle" data-i18n="mag.arch.concat">konkatenacja, 350</text>
+            <text class="small" x="612" y="188" text-anchor="middle">7 × 50</text>
+          </g>
+          <line class="line" x1="718" y1="133" x2="752" y2="133" marker-end="url(#arr)"/>
+
+          <!-- W1 + ReLU -->
+          <g>
+            <rect class="box" x="760" y="88" width="104" height="90" rx="3"/>
+            <text class="sub m" x="812" y="122" text-anchor="middle">W₁x + b₁</text>
+            <text class="lbl" x="812" y="150" text-anchor="middle">ReLU</text>
+            <text class="small" x="812" y="200" text-anchor="middle">W₁: 128 × 350</text>
+          </g>
+          <line class="line" x1="872" y1="133" x2="906" y2="133" marker-end="url(#arr)"/>
+
+          <!-- hidden 128 -->
+          <g>
+            <rect class="vec" x="914" y="122" width="96" height="22" rx="3"/>
+            <rect class="hi" x="922" y="126" width="9" height="14" rx="1"/>
+            <rect class="hi" x="946" y="126" width="9" height="14" rx="1"/>
+            <rect class="hi" x="970" y="126" width="9" height="14" rx="1"/>
+            <rect class="hi" x="993" y="126" width="9" height="14" rx="1"/>
+            <text class="lbl m" x="962" y="106" text-anchor="middle">a₁</text>
+            <text class="small" x="962" y="170" text-anchor="middle" data-i18n="mag.arch.hidden">warstwa ukryta, 128</text>
+          </g>
+          <line class="line" x1="1018" y1="133" x2="1052" y2="133" marker-end="url(#arr)"/>
+
+          <!-- W2 + softmax -> 3 classes -->
+          <g>
+            <rect class="box" x="1060" y="88" width="72" height="90" rx="3"/>
+            <text class="sub m" x="1096" y="122" text-anchor="middle">W₂a₁+b₂</text>
+            <text class="lbl" x="1096" y="150" text-anchor="middle">softmax</text>
+            <text class="small" x="1096" y="200" text-anchor="middle">W₂: 3 × 128</text>
+          </g>
+          <g>
+            <rect class="box" x="1144" y="96"  width="36" height="24" rx="3"/>
+            <rect class="hi"  x="1144" y="126" width="36" height="24" rx="3"/>
+            <rect class="box" x="1144" y="156" width="36" height="24" rx="3"/>
+            <text class="sub" x="1162" y="113" text-anchor="middle">∅</text>
+            <text class="sub hi-text" x="1162" y="144" text-anchor="middle" font-weight="700">,</text>
+            <text class="sub" x="1162" y="173" text-anchor="middle">.</text>
+            <text class="small" x="1162" y="200" text-anchor="middle" data-i18n="mag.arch.out">3 klasy</text>
+          </g>
+        </svg>
+        <figcaption data-i18n="mag.model.figCaption">Przebieg w przód dla jednego słowa.</figcaption>
+      </figure>
+
+      <div class="body">
+        <p data-i18n="mag.model.p1">Siedem indeksów wybiera wiersze macierzy zanurzeń E.</p>
+        <p data-i18n="mag.model.p2">Inicjalizacja.</p>
+        <p data-i18n="mag.model.p3">Backprop wyprowadzony na kartce.</p>
+      </div>
+      <aside>
+        <h3 data-i18n="mag.model.asideTitle">Parametry</h3>
+        <div class="table-wrap">
+          <table>
+            <thead><tr>
+              <th data-i18n="mag.model.thTensor">Tensor</th>
+              <th data-i18n="mag.model.thShape">Kształt</th>
+              <th data-i18n="mag.model.thCount">Liczba</th>
+              <th data-i18n="mag.model.thInit">Init</th>
+            </tr></thead>
+            <tbody>
+              <tr><td><i>E</i></td><td>5001 × 50</td><td data-i18n="mag.n.pE">250 050</td><td data-i18n="mag.model.initE">randn · 0,01</td></tr>
+              <tr><td><i>W</i>₁</td><td>128 × 350</td><td data-i18n="mag.n.pW1">44 800</td><td data-i18n="mag.model.initHe">He</td></tr>
+              <tr><td><i>b</i>₁</td><td>128</td><td>128</td><td data-i18n="mag.model.initZero">zera</td></tr>
+              <tr><td><i>W</i>₂</td><td>3 × 128</td><td>384</td><td data-i18n="mag.model.initHe">He</td></tr>
+              <tr><td><i>b</i>₂</td><td>3</td><td>3</td><td data-i18n="mag.model.initZero">zera</td></tr>
+              <tr class="total"><td data-i18n="mag.model.rTotal">razem</td><td></td><td data-i18n="mag.n.pAll">295 365</td><td></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </aside>
+    </section>
+
+    <!-- ===== Results ===== -->
+    <section class="sec">
+      <h2 data-i18n="mag.results.title">Wyniki</h2>
+      <div class="body">
+        <p data-i18n="mag.results.p1">Metryka to Macro-F1 na zbiorze testowym.</p>
+        <div class="table-wrap">
+          <table>
+            <thead><tr>
+              <th data-i18n="mag.results.thClass">Klasa</th>
+              <th data-i18n="mag.results.thPrec">Precyzja</th>
+              <th data-i18n="mag.results.thRec">Czułość</th>
+              <th>F1</th>
+            </tr></thead>
+            <tbody>
+              <tr><td><code>NONE</code></td><td data-i18n="mag.num.922">0,922</td><td data-i18n="mag.num.922">0,922</td><td data-i18n="mag.num.922">0,922</td></tr>
+              <tr><td><code>COMMA</code></td><td data-i18n="mag.num.588">0,588</td><td data-i18n="mag.num.467">0,467</td><td data-i18n="mag.num.520">0,520</td></tr>
+              <tr><td><code>PERIOD</code></td><td data-i18n="mag.num.333">0,333</td><td data-i18n="mag.num.442">0,442</td><td data-i18n="mag.num.381">0,381</td></tr>
+              <tr class="total"><td>Macro-F1</td><td></td><td></td><td data-i18n="mag.num.608">0,608</td></tr>
+            </tbody>
+          </table>
         </div>
       </div>
-      <figcaption data-i18n="tech.archCaption">Perceptron wielowarstwowy (MLP): dla każdego słowa przewiduje jedną z trzech klas — brak znaku, przecinek, kropka.</figcaption>
-    </figure>
+      <aside>
+        <div class="table-wrap">
+          <table>
+            <thead><tr>
+              <th data-i18n="mag.results.thModel">Model</th>
+              <th data-i18n="mag.results.thScore">Macro-F1 (test)</th>
+            </tr></thead>
+            <tbody>
+              <tr><td data-i18n="mag.results.rBaseline">Bigramy, etap 0</td><td data-i18n="mag.num.511">0,511</td></tr>
+              <tr><td data-i18n="mag.results.rUntuned">MLP przed strojeniem</td><td data-i18n="mag.num.535">0,535</td></tr>
+              <tr><td data-i18n="mag.results.rTuned">MLP po strojeniu</td><td class="best" data-i18n="mag.num.608">0,608</td></tr>
+              <tr><td data-i18n="mag.results.rTarget">Cel etapu</td><td data-i18n="mag.num.611">0,611</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </aside>
 
-    <h3 class="roadmap-title" data-i18n="tech.roadmapTitle">Mapa drogowa projektu</h3>
-    <ol class="roadmap">
-      <li class="done"><span class="stage">0</span><span data-i18n="tech.r0">Baza bigramowa</span></li>
-      <li class="done"><span class="stage">1</span><span data-i18n="tech.r1">MLP z ręcznym backpropem</span></li>
-      <li class="current"><span class="stage">2</span><span data-i18n="tech.r2">Bi-LSTM / mini-Transformer</span></li>
-      <li><span class="stage">3</span><span data-i18n="tech.r3">Więcej znaków: ? !</span></li>
-      <li><span class="stage">4</span><span data-i18n="tech.r4">+ wielkie litery</span></li>
-      <li><span class="stage">5</span><span data-i18n="tech.r5">API i wersja MVP</span></li>
-    </ol>
-  </section>
+      <blockquote class="pull wide" data-i18n="mag.results.quote">Pojemność modelu nie była wąskim gardłem. Była nim precyzja rzadkich klas.</blockquote>
 
-  <!-- ============ PAPER & CODE ============ -->
-  <section class="section links-section">
-    <h2 class="section-title" data-i18n="links.title">Publikacja i kod</h2>
-    <div class="links-grid">
-      <a class="link-card" href="https://github.com/tomekceszke/polish-punctuation-restorer/blob/main/paper/paper.md" target="_blank" rel="noopener">
-        <span class="link-kicker" data-i18n="links.paperKicker">artykuł naukowy (draft)</span>
-        <span class="link-name">Polish Punctuation Restorer — paper</span>
-        <span class="link-arrow">→</span>
-      </a>
-      <a class="link-card" href="https://github.com/tomekceszke/polish-punctuation-restorer" target="_blank" rel="noopener">
-        <span class="link-kicker" data-i18n="links.repoKicker">kod źródłowy · MIT</span>
-        <span class="link-name">github.com/tomekceszke/polish-punctuation-restorer</span>
-        <span class="link-arrow">→</span>
-      </a>
-      <a class="link-card" href="https://huggingface.co/tomekceszke/polish-punctuation-restorer" target="_blank" rel="noopener">
-        <span class="link-kicker" data-i18n="links.hfKicker">wagi modelu · Hugging Face</span>
-        <span class="link-name">huggingface.co/tomekceszke/polish-punctuation-restorer</span>
-        <span class="link-arrow">→</span>
-      </a>
-    </div>
-  </section>
+      <div class="body">
+        <div class="table-wrap">
+          <table>
+            <caption data-i18n="mag.results.ladderTitle">Co dała każda zmiana, w kolejności wprowadzania</caption>
+            <thead><tr>
+              <th data-i18n="mag.results.thStep">Krok</th>
+              <th class="txt" data-i18n="mag.results.thChange">Zmiana</th>
+              <th data-i18n="mag.results.thF1">Macro-F1</th>
+            </tr></thead>
+            <tbody>
+              <tr><td data-i18n="mag.results.l0">punkt wyjścia</td><td class="txt" data-i18n="mag.results.l0c">α = 1, K = 2, lr 0,01, 10 epok</td><td data-i18n="mag.results.l0v">0,535</td></tr>
+              <tr><td data-i18n="mag.results.l1">optymalizator</td><td class="txt" data-i18n="mag.results.l1c">lr z 0,01 na 0,005, 30 epok, cierpliwość 5</td><td data-i18n="mag.results.l1v">≈ 0,555 (wal.)</td></tr>
+              <tr><td data-i18n="mag.results.l2">kontekst</td><td class="txt" data-i18n="mag.results.l2c">K z 2 na 3</td><td data-i18n="mag.results.l2v">≈ 0,559 (wal.)</td></tr>
+              <tr><td data-i18n="mag.results.l3">wagi klas</td><td class="txt" data-i18n="mag.results.l3c">α z 1 na 0,5</td><td class="best" data-i18n="mag.results.l3v">0,606</td></tr>
+              <tr><td data-i18n="mag.results.l4">retrening</td><td class="txt" data-i18n="mag.results.l4c">α = 0,5, czysty przebieg</td><td data-i18n="mag.results.l4v">0,608</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p data-i18n="mag.results.p2">Pełna odwrotna częstość.</p>
+      </div>
+      <aside>
+        <h3 data-i18n="mag.results.asideTitle">Wagi klas</h3>
+        <p class="formula">w<sub>c</sub> = ( N / (3 · n<sub>c</sub>) )<sup>α</sup></p>
+        <p data-i18n="mag.results.asideText">α = 0 daje wagi jednostkowe.</p>
+      </aside>
+    </section>
 
+    <!-- ===== Next ===== -->
+    <section class="sec">
+      <h2 data-i18n="mag.next.title">Dalej</h2>
+      <ol class="stages wide" start="0">
+        <li class="past"><span data-i18n="mag.next.s0">Preprocessing i baza bigramowa</span><span class="state" data-i18n="mag.next.done">zrobione</span></li>
+        <li class="past"><span data-i18n="mag.next.s1">MLP, ręczny backprop</span><span class="state" data-i18n="mag.next.done">zrobione</span></li>
+        <li class="now"><span data-i18n="mag.next.s2">Bi-LSTM albo mini-Transformer</span><span class="state" data-i18n="mag.next.now">w toku</span></li>
+        <li><span data-i18n="mag.next.s3">Rozszerzona interpunkcja: pytajnik i wykrzyknik</span></li>
+        <li><span data-i18n="mag.next.s4">Multi-task: wielkie litery</span></li>
+        <li><span data-i18n="mag.next.s5">REST API i wersja MVP</span></li>
+      </ol>
+    </section>
+
+    <!-- ===== Links ===== -->
+    <section class="sec">
+      <h2 data-i18n="mag.links.title">Kod, wagi, korpus, artykuł</h2>
+      <dl class="refs wide">
+        <div>
+          <dt><a href="https://github.com/tomekceszke/polish-punctuation-restorer" target="_blank" rel="noopener" data-i18n="mag.links.repo">Repozytorium</a></dt>
+          <dd data-i18n="mag.links.repoNote">Cały potok w Octave.</dd>
+        </div>
+        <div>
+          <dt><a href="https://huggingface.co/tomekceszke/polish-punctuation-restorer" target="_blank" rel="noopener" data-i18n="mag.links.model">Model na Hugging Face</a></dt>
+          <dd data-i18n="mag.links.modelNote">model.mat, karta modelu.</dd>
+        </div>
+        <div>
+          <dt><a href="https://huggingface.co/datasets/tomekceszke/polish-punctuation-corpus" target="_blank" rel="noopener" data-i18n="mag.links.data">Korpus na Hugging Face</a></dt>
+          <dd data-i18n="mag.links.dataNote">1,2 mln par w parquet.</dd>
+        </div>
+        <div>
+          <dt><a href="https://github.com/tomekceszke/polish-punctuation-restorer/blob/main/paper/paper.md" target="_blank" rel="noopener" data-i18n="mag.links.paper">Artykuł</a></dt>
+          <dd data-i18n="mag.links.paperNote">Cel, metoda, wyniki, wnioski.</dd>
+        </div>
+      </dl>
+    </section>
+
+  </div>
 </main>
 
-<footer class="site-footer">
-  <p data-i18n="footer.line1">Projekt badawczo-edukacyjny · etap 1 z 5 · wyniki będą się poprawiać z każdym etapem.</p>
-  <p class="footer-ai" data-i18n="footer.ai">Rola AI: cała matematyka i kod modelu napisane ręcznie przez autora. AI pełniło rolę mentora — pytania i wskazówki, bez gotowego kodu. Z pomocą AI powstała natomiast ta strona.</p>
-  <p class="footer-author"><a href="https://tomek.ceszke.com/">Tomasz Ceszke</a> · MIT License · 2026</p>
+<footer class="colophon" data-punct>
+  <div class="wrap">
+    <p data-i18n="mag.footer.ai">Matematyka i kod modelu: ręcznie.</p>
+    <p class="meta" data-i18n-html="mag.footer.meta"><a href="https://tomek.ceszke.com/">Tomasz Ceszke</a>, 2026, licencja MIT.</p>
+  </div>
 </footer>
 
 <script src="i18n.js"></script>
+<script src="i18n-page.js"></script>
 <script src="model.js"></script>
 <script src="script.js"></script>
 </body>

@@ -1,6 +1,6 @@
-/* Copy for the feature-article page (alt.html).
-   Loaded after i18n.js: extends the shared STRINGS with mag.* keys and overrides the
-   language-toggle label. All demo.* strings stay shared with index.html.
+/* Page copy for index.html.
+   Loaded after i18n.js: extends the shared STRINGS with mag.* keys and sets the
+   language-toggle label. demo.* strings live in i18n.js.
    Numbers live in mag.n.* (integers) and mag.num.* (decimals) so the separators follow
    the language. */
 
