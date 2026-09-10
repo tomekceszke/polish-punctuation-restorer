@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="ppr-build" content="dev">
   <title>Polish Punctuation Restorer — przecinki wracają na miejsce</title>
   <meta name="description" content="Sieć neuronowa, która uzupełnia brakujące przecinki i kropki w polskim tekście. Projekt badawczy zbudowany od zera, wytrenowany na szkolnych lekturach.">
   <meta property="og:title" content="Polish Punctuation Restorer">
@@ -69,13 +70,14 @@
   <!-- ============ DEMO ============ -->
   <section class="section demo-section" id="demo">
     <h2 class="section-title" data-i18n="demo.title">Tekst bez interpunkcji? Chwileczkę.</h2>
-    <div class="demo">
+    <div class="demo" id="demoPanel">
       <div class="demo-box" id="demoBox" aria-live="polite"></div>
       <div class="demo-actions">
         <button class="demo-btn" id="demoBtn" tabindex="-1" data-i18n="demo.button">Uzupełnij znaki</button>
         <span class="demo-status" id="demoStatus"></span>
+        <span class="demo-count" id="demoCount"></span>
       </div>
-      <p class="demo-note" data-i18n="demo.note">Animacja poglądowa — prawdziwe pole tekstowe podłączone do modelu pojawi się tu wraz z wersją MVP.</p>
+      <p class="demo-note" data-i18n="demo.note">Kliknij w ramkę i wpisz własny tekst — model policzy się w Twojej przeglądarce, bez serwera.</p>
     </div>
   </section>
 
@@ -104,7 +106,7 @@
   <!-- ============ BOOKS ============ -->
   <section class="section books-section">
     <h2 class="section-title" data-i18n="books.title">Wytrenowany na klasyce</h2>
-    <p class="section-lead" data-i18n="books.lead">Model uczył się interpunkcji z ~1,2 miliona słów literackiej polszczyzny — lektur, które każdy zna ze szkoły.</p>
+    <p class="section-lead" data-i18n="books.lead">Model uczył się interpunkcji z ~1,07 miliona słów literackiej polszczyzny — lektur, które każdy zna ze szkoły.</p>
     <p class="books-group-label" data-i18n="books.trainLabel">zbiór treningowy · 7 książek</p>
     <div class="books-grid">
       <div class="book"><span class="book-title">Chłopi</span><span class="book-author">Władysław Reymont</span></div>
@@ -204,10 +206,11 @@
 <footer class="site-footer">
   <p data-i18n="footer.line1">Projekt badawczo-edukacyjny · etap 1 z 5 · wyniki będą się poprawiać z każdym etapem.</p>
   <p class="footer-ai" data-i18n="footer.ai">Rola AI: cała matematyka i kod modelu napisane ręcznie przez autora. AI pełniło rolę mentora — pytania i wskazówki, bez gotowego kodu. Z pomocą AI powstała natomiast ta strona.</p>
-  <p class="footer-author">Tomasz Ceszke · MIT License · 2026</p>
+  <p class="footer-author"><a href="https://tomek.ceszke.com/">Tomasz Ceszke</a> · MIT License · 2026</p>
 </footer>
 
 <script src="i18n.js"></script>
+<script src="model.js"></script>
 <script src="script.js"></script>
 </body>
 </html>

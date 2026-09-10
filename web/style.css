@@ -222,8 +222,29 @@ a { color: inherit; }
   border-radius: var(--radius);
   padding: 1.75rem 2rem;
   min-height: 9.5rem;
+  max-height: 24rem;
+  overflow-y: auto;
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
   margin: 2rem 0 1.25rem;
   box-shadow: 0 2px 20px rgba(0,0,0,0.04);
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+/* Attract mode: the whole panel is one big invitation to click. */
+.demo:not(.is-live) .demo-box { cursor: text; }
+
+.demo-box:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-soft), 0 2px 20px rgba(0,0,0,0.04);
+}
+
+/* :empty breaks the moment contenteditable leaves a stray <br>, so the state comes from JS. */
+.demo.is-live .demo-box.is-empty::before {
+  content: attr(data-placeholder);
+  color: var(--ink-soft);
+  opacity: 0.7;
 }
 
 .demo-box .caret {
@@ -279,7 +300,8 @@ a { color: inherit; }
   font-size: 0.95rem;
   min-height: 1.4em;
 }
-.demo-status.working::after {
+.demo-status.working::after,
+.demo-status.loading::after {
   content: "";
   display: inline-block;
   width: 0.85em; height: 0.85em;
@@ -291,6 +313,28 @@ a { color: inherit; }
   animation: spin 0.7s linear infinite;
 }
 @keyframes spin { to { transform: rotate(360deg); } }
+
+.demo-status.error { color: var(--accent); }
+
+.demo-count {
+  margin-left: auto;
+  font-family: var(--font-display);
+  font-size: 0.85rem;
+  color: var(--ink-soft);
+  font-variant-numeric: tabular-nums;
+}
+.demo-count.over { color: var(--accent); font-weight: 500; }
+
+/* Live mode hands the button back to the visitor — in attract mode it presses itself. */
+.demo.is-live .demo-btn {
+  pointer-events: auto;
+  cursor: pointer;
+  opacity: 1;
+}
+.demo.is-live .demo-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 22px rgba(230, 59, 46, 0.4); }
+.demo.is-live .demo-btn:active { transform: scale(0.95); }
+.demo.is-live .demo-btn:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
+.demo-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; box-shadow: none; }
 
 .demo-note {
   position: relative;
@@ -561,6 +605,15 @@ a { color: inherit; }
   border-left: 2px solid var(--accent);
 }
 .footer-author { margin-top: 1.2rem; font-size: 0.88rem; }
+.footer-author a {
+  color: var(--ink);
+  text-decoration: underline;
+  text-decoration-color: var(--accent);
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 3px;
+  transition: color 0.15s;
+}
+.footer-author a:hover { color: var(--accent); }
 
 /* ===== Motion & small screens ===== */
 @media (prefers-reduced-motion: reduce) {

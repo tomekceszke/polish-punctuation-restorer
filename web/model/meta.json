@@ -1,0 +1,21 @@
+{
+  "exported": "2026-09-10",
+  "V": 5000,
+  "d": 50,
+  "h": 128,
+  "k": 3,
+  "unk": 5001,
+  "classes": ["", ",", "."],
+  "bytes": 1181460,
+  "tensors": {
+    "E":  { "offset": 0, "rows": 5001, "cols": 50 },
+    "W1": { "offset": 1000200, "rows": 128, "cols": 350 },
+    "b1": { "offset": 1179400, "rows": 1, "cols": 128 },
+    "W2": { "offset": 1179912, "rows": 3, "cols": 128 },
+    "b2": { "offset": 1181448, "rows": 1, "cols": 3 }
+  },
+  "selfTest": {
+    "input": "wiosna przyszła nagle śnieg stopniał w ciągu jednej nocy a rzeka wylała na łąki",
+    "output": "Wiosna. Przyszła nagle śnieg stopniał w ciągu jednej nocy. A rzeka wylała na łąki."
+  }
+}

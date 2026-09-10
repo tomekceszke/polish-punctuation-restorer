@@ -20,12 +20,31 @@ function applyLang(lang) {
   document.getElementById("langToggle").textContent = lang === "pl" ? "EN" : "PL";
 }
 
-/* ===== Demo animation ===== */
+/* ===== Demo =====
+   One box, two lives. It starts as an attract loop — the scripted animation that shows what the
+   project does — and turns into a real, editable text field the moment the visitor touches it.
+   From there it runs the actual model through PPR (model.js), and the result is revealed with the
+   very same mark-by-mark animation, so the promise and the product look like one thing. */
+const panel = document.getElementById("demoPanel");
 const box = document.getElementById("demoBox");
 const btn = document.getElementById("demoBtn");
 const statusEl = document.getElementById("demoStatus");
+const countEl = document.getElementById("demoCount");
+
+const MAX_CHARS = 8000;
+const IDLE_BACK_MS = 20000; // empty and untouched for this long -> the animation comes back
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+const reduceMotion = () => window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+let state = "attract"; // attract | live | working | done | error
+let idleTimer = null;
+
+function t(key, vars) {
+  let str = STRINGS[currentLang()][key] || "";
+  if (vars) for (const [k, v] of Object.entries(vars)) str = str.replace("{" + k + "}", v);
+  return str;
+}
 
 // "Wiosna przyszła nagle," -> [{word: "Wiosna", mark: ""}, ..., {word: "nagle", mark: ","}]
 function tokenize(sample) {
@@ -60,16 +79,30 @@ function renderTokens(tokens, marksVisible) {
   });
 }
 
+async function revealMarks() {
+  const marks = box.querySelectorAll(".mark");
+  if (reduceMotion()) {
+    marks.forEach((mark) => mark.classList.add("on"));
+    return;
+  }
+  for (const mark of marks) {
+    mark.classList.add("on");
+    await sleep(240);
+  }
+}
+
+/* ----- attract mode: the scripted animation ----- */
+
 let generation = 0;
 
 async function runDemoLoop(lang) {
   const gen = ++generation;
-  const alive = () => gen === generation;
+  const alive = () => gen === generation && state === "attract";
   const dict = STRINGS[lang];
   const samples = DEMO_SAMPLES; // always Polish — the model only handles Polish text
   let idx = 0;
 
-  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+  if (reduceMotion()) {
     renderTokens(tokenize(samples[0]), true);
     statusEl.textContent = dict["demo.done"];
     btn.classList.add("armed");
@@ -120,6 +153,186 @@ async function runDemoLoop(lang) {
   }
 }
 
+function enterAttract() {
+  clearTimeout(idleTimer);
+  state = "attract";
+  box.removeAttribute("contenteditable");
+  box.removeAttribute("role");
+  box.removeAttribute("aria-multiline");
+  box.removeAttribute("tabindex");
+  box.textContent = "";
+  panel.classList.remove("is-live");
+  btn.tabIndex = -1;
+  btn.disabled = false;
+  statusEl.textContent = "";
+  statusEl.className = "demo-status";
+  countEl.textContent = "";
+  runDemoLoop(currentLang());
+}
+
+/* ----- live mode: the real thing ----- */
+
+function enterLive() {
+  generation++; // tears down the attract loop
+  clearTimeout(idleTimer);
+  state = "live";
+  box.textContent = "";
+  // plaintext-only keeps pasted markup out; Firefox falls back to true plus the paste handler below
+  box.setAttribute("contenteditable", "plaintext-only");
+  if (box.contentEditable !== "plaintext-only") box.setAttribute("contenteditable", "true");
+  box.setAttribute("role", "textbox");
+  box.setAttribute("aria-multiline", "true");
+  box.setAttribute("aria-label", t("demo.placeholder"));
+  panel.classList.add("is-live");
+  btn.tabIndex = 0;
+  btn.classList.add("armed");
+  btn.classList.remove("pressed");
+  statusEl.textContent = "";
+  statusEl.className = "demo-status";
+  updateCount();
+  box.focus();
+  warmModel();
+}
+
+function updateCount() {
+  const n = box.textContent.trim().length;
+  box.classList.toggle("is-empty", n === 0);
+  countEl.textContent = n ? t("demo.count", { n, max: MAX_CHARS }) : "";
+  countEl.classList.toggle("over", n > MAX_CHARS);
+}
+
+function scheduleIdleReturn() {
+  clearTimeout(idleTimer);
+  if (state !== "live" || box.textContent.trim()) return;
+  idleTimer = setTimeout(() => {
+    if (state === "live" && !box.textContent.trim()) enterAttract();
+  }, IDLE_BACK_MS);
+}
+
+// Starts the 1.2 MB download as soon as the visitor engages, so it overlaps with them typing.
+function warmModel() {
+  PPR.load(onDownload).then(
+    () => {
+      if (statusEl.classList.contains("loading")) {
+        statusEl.textContent = "";
+        statusEl.className = "demo-status";
+      }
+      PPR.selfTest();
+    },
+    (err) => fail(err)
+  );
+}
+
+function onDownload(fraction) {
+  if (state === "done" || PPR.ready) return;
+  statusEl.className = "demo-status loading";
+  statusEl.textContent = t("demo.loadingPct", { pct: Math.round(fraction * 100) });
+}
+
+function fail(err) {
+  console.error(err);
+  state = "error";
+  statusEl.className = "demo-status error";
+  statusEl.textContent = t("demo.error");
+  btn.disabled = true;
+}
+
+async function run() {
+  if (state === "working" || state === "error") return;
+  const text = box.textContent.trim();
+  if (!text) {
+    statusEl.className = "demo-status";
+    statusEl.textContent = t("demo.empty");
+    box.focus();
+    return;
+  }
+  if (text.length > MAX_CHARS) {
+    statusEl.className = "demo-status error";
+    statusEl.textContent = t("demo.tooLong", { n: text.length, max: MAX_CHARS });
+    return;
+  }
+
+  state = "working";
+  clearTimeout(idleTimer);
+  btn.classList.add("pressed");
+  setTimeout(() => btn.classList.remove("pressed"), 180);
+
+  try {
+    if (!PPR.ready) {
+      statusEl.className = "demo-status loading";
+      statusEl.textContent = t("demo.loading");
+      await PPR.load(onDownload);
+      PPR.selfTest();
+    }
+    statusEl.className = "demo-status working";
+    statusEl.textContent = t("demo.working");
+
+    const started = performance.now();
+    const result = await PPR.restore(text);
+    // Give the spinner a beat on short inputs — the model is far too fast to be believed otherwise.
+    const elapsed = performance.now() - started;
+    if (!reduceMotion() && elapsed < 450) await sleep(450 - elapsed);
+
+    if (!result.tokens.length) {
+      state = "live";
+      statusEl.className = "demo-status";
+      statusEl.textContent = t("demo.empty");
+      return;
+    }
+
+    renderTokens(result.tokens, false);
+    statusEl.className = "demo-status";
+    statusEl.textContent = "";
+    await revealMarks();
+    statusEl.textContent = t("demo.done");
+    state = "done";
+    updateCount();
+  } catch (err) {
+    fail(err);
+  }
+}
+
+/* ----- wiring ----- */
+
+panel.addEventListener("pointerdown", (e) => {
+  if (state === "attract") {
+    e.preventDefault(); // the click belongs to the box, not to whatever the animation painted
+    enterLive();
+  }
+});
+
+box.addEventListener("keydown", (e) => {
+  if (state === "attract") {
+    enterLive();
+    return;
+  }
+  if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) {
+    e.preventDefault();
+    run();
+  }
+});
+
+box.addEventListener("input", () => {
+  if (state === "done") state = "live";
+  updateCount();
+  scheduleIdleReturn();
+});
+
+box.addEventListener("blur", scheduleIdleReturn);
+
+// contenteditable would otherwise happily swallow styled HTML.
+box.addEventListener("paste", (e) => {
+  if (state === "attract") return;
+  e.preventDefault();
+  const text = (e.clipboardData || window.clipboardData).getData("text/plain");
+  document.execCommand("insertText", false, text);
+});
+
+btn.addEventListener("click", () => {
+  if (state === "attract") enterLive();
+  else run();
+});
+
 /* ===== Site-wide punctuation motif =====
    Wraps every , and . in page text in <span class="punct"> (accent color;
    bold in headings via CSS). Skips the demo box (own .mark system), already
@@ -130,7 +343,7 @@ function accentPunctuation() {
     const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
       acceptNode(node) {
         const parent = node.parentElement;
-        if (!parent || parent.closest("#demoBox, .punct, .accent")) {
+        if (!parent || parent.closest("#demoBox, #demoStatus, #demoCount, .punct, .accent")) {
           return NodeFilter.FILTER_REJECT;
         }
         return /[,.]/.test(node.nodeValue)
@@ -203,7 +416,17 @@ function setLang(lang) {
   localStorage.setItem(LANG_KEY, lang);
   applyLang(lang);
   accentPunctuation();
-  runDemoLoop(lang);
+  box.dataset.placeholder = STRINGS[lang]["demo.placeholder"];
+  if (state === "attract") runDemoLoop(lang);
+  else refreshLiveStrings();
+}
+
+// A language switch must not throw away what the visitor typed, so only the chrome is re-rendered.
+function refreshLiveStrings() {
+  box.setAttribute("aria-label", t("demo.placeholder"));
+  updateCount();
+  if (state === "done") statusEl.textContent = t("demo.done");
+  else if (state === "error") statusEl.textContent = t("demo.error");
 }
 
 document.getElementById("langToggle").addEventListener("click", () => {
