@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="ppr-build" content="dev">
+  <title>Polish Punctuation Restorer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,600;1,7..72,400&display=swap" rel="stylesheet">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='80' font-size='90' fill='%231f3b8a'>,</text></svg>">
+  <link rel="stylesheet" href="style-alt.css">
+</head>
+<body>
+
+<div class="sheet">
+
+  <header class="masthead">
+    <h1>Polish Punctuation Restorer</h1>
+    <button class="lang-toggle" id="langToggle" aria-label="Switch language">English</button>
+  </header>
+
+  <p class="abstract" data-punct data-i18n="doc.abstract">Sieć neuronowa, która wstawia przecinki i kropki do polskiego tekstu pozbawionego interpunkcji. Napisałem ją od zera w GNU Octave, wyprowadzając wszystkie gradienty ręcznie, bez żadnej biblioteki uczenia maszynowego. Model liczy się poniżej, w Twojej przeglądarce.</p>
+  <p class="byline" data-i18n="doc.byline">Tomasz Ceszke, projekt badawczo-edukacyjny, etap 1 z 5</p>
+
+  <main>
+
+    <div class="demo" id="demoPanel">
+      <div class="demo-box" id="demoBox" lang="pl" aria-live="polite"></div>
+      <div class="demo-actions">
+        <button class="demo-btn" id="demoBtn" tabindex="-1" data-i18n="demo.button">Uzupełnij znaki</button>
+        <span class="demo-status" id="demoStatus"></span>
+        <span class="demo-count" id="demoCount"></span>
+      </div>
+    </div>
+    <p class="demo-note" data-i18n="demo.note">Kliknij w ramkę i wpisz własny tekst — model policzy się w Twojej przeglądarce, bez serwera.</p>
+
+    <h2 data-i18n="doc.how.title">Jak to działa</h2>
+    <p data-i18n="doc.how.p1">Model ogląda tekst słowo po słowie.</p>
+
+    <figure class="window">
+      <div class="window-grid" lang="pl">
+        <span class="w">w</span>
+        <span class="w">ciągu</span>
+        <span class="w">jednej</span>
+        <span class="w focus">nocy</span>
+        <span class="w">a</span>
+        <span class="w">rzeka</span>
+        <span class="w">wylała</span>
+        <span class="window-tick" aria-hidden="true"></span>
+        <span class="window-choices">
+          <span class="choice" data-i18n="doc.how.choiceNone">bez znaku</span>
+          <span class="choice picked">,</span>
+          <span class="choice">.</span>
+        </span>
+      </div>
+      <figcaption data-i18n="doc.how.figCaption">Okno wokół wyrazu „nocy”. Spośród trzech możliwości model wybiera przecinek.</figcaption>
+    </figure>
+
+    <p data-i18n="doc.how.p2">Każde z siedmiu słów zamienia się w wektor pięćdziesięciu liczb.</p>
+
+    <h2 data-i18n="doc.corpus.title">Na czym się uczył</h2>
+    <p data-i18n="doc.corpus.p1">Korpus to jedenaście książek z Wolnych Lektur.</p>
+
+    <p class="set-label" data-i18n="doc.corpus.trainLabel">Zbiór treningowy, 7 książek, 828 125 słów.</p>
+    <ul class="bib" lang="pl">
+      <li>Władysław Reymont, <cite>Chłopi</cite></li>
+      <li>Bolesław Prus, <cite>Lalka</cite></li>
+      <li>Eliza Orzeszkowa, <cite>Nad Niemnem</cite></li>
+      <li>Franz Kafka, <cite>Proces</cite></li>
+      <li>Stefan Żeromski, <cite>Przedwiośnie</cite></li>
+      <li>Gabriela Zapolska, <cite>Moralność pani Dulskiej</cite></li>
+      <li>Antoine de Saint-Exupéry, <cite>Mały Książę</cite></li>
+    </ul>
+
+    <p class="set-label" data-i18n="doc.corpus.valLabel">Zbiór walidacyjny, 2 książki, 239 580 słów.</p>
+    <ul class="bib" lang="pl">
+      <li>Władysław Reymont, <cite>Ziemia obiecana</cite></li>
+      <li>George Orwell, <cite>Rok 1984</cite></li>
+    </ul>
+
+    <p class="set-label" data-i18n="doc.corpus.testLabel">Zbiór testowy, 2 książki, 128 235 słów.</p>
+    <ul class="bib" lang="pl">
+      <li>Stefan Żeromski, <cite>Syzyfowe prace</cite></li>
+      <li>Frances Hodgson Burnett, <cite>Tajemniczy ogród</cite></li>
+    </ul>
+
+    <p class="credit" data-i18n-html="doc.corpus.credit">Teksty pochodzą z biblioteki <a href="https://wolnelektury.pl" target="_blank" rel="noopener">Wolne Lektury</a>.</p>
+
+    <p class="after-credit" data-i18n="doc.corpus.p2">Cztery słowa na pięć nie mają po sobie żadnego znaku.</p>
+
+    <h2 data-i18n="doc.results.title">Wyniki</h2>
+    <p data-i18n="doc.results.p1">Miarą jest Macro-F1.</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th data-i18n="doc.results.thClass">Klasa</th>
+            <th data-i18n="doc.results.thPrec">Precyzja</th>
+            <th data-i18n="doc.results.thRec">Czułość</th>
+            <th>F1</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td data-i18n="doc.results.rowNone">bez znaku</td>
+            <td data-i18n="doc.num.922">0,922</td>
+            <td data-i18n="doc.num.922">0,922</td>
+            <td data-i18n="doc.num.922">0,922</td>
+          </tr>
+          <tr>
+            <td data-i18n="doc.results.rowComma">przecinek</td>
+            <td data-i18n="doc.num.588">0,588</td>
+            <td data-i18n="doc.num.467">0,467</td>
+            <td data-i18n="doc.num.520">0,520</td>
+          </tr>
+          <tr>
+            <td data-i18n="doc.results.rowPeriod">kropka</td>
+            <td data-i18n="doc.num.333">0,333</td>
+            <td data-i18n="doc.num.442">0,442</td>
+            <td data-i18n="doc.num.381">0,381</td>
+          </tr>
+          <tr class="total">
+            <td data-i18n="doc.results.rowMacro">Macro-F1</td>
+            <td></td>
+            <td></td>
+            <td data-i18n="doc.num.608">0,608</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th data-i18n="doc.results.thModel">Model</th>
+            <th data-i18n="doc.results.thScore">Macro-F1 na teście</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td data-i18n="doc.results.rowBaseline">Bigramy, etap 0</td>
+            <td data-i18n="doc.num.511">0,511</td>
+          </tr>
+          <tr>
+            <td data-i18n="doc.results.rowUntuned">MLP przed strojeniem</td>
+            <td data-i18n="doc.num.535">0,535</td>
+          </tr>
+          <tr>
+            <td data-i18n="doc.results.rowTuned">MLP po strojeniu</td>
+            <td class="best" data-i18n="doc.num.608">0,608</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p data-i18n="doc.results.p2">Największą różnicę zrobiło temperowanie wag klas.</p>
+
+    <h2 data-i18n="doc.next.title">Co dalej</h2>
+    <ol class="stages" start="0">
+      <li class="past"><span data-i18n="doc.next.s0">Wstępne przetwarzanie korpusu i baza bigramowa.</span> <span class="state" data-i18n="doc.next.done">zrobione</span></li>
+      <li class="past"><span data-i18n="doc.next.s1">MLP z ręcznie wyprowadzonym backpropem.</span> <span class="state" data-i18n="doc.next.done">zrobione</span></li>
+      <li class="now"><span data-i18n="doc.next.s2">Bi-LSTM albo mini-Transformer.</span> <span class="state" data-i18n="doc.next.now">w toku</span></li>
+      <li><span data-i18n="doc.next.s3">Więcej znaków: pytajnik i wykrzyknik.</span></li>
+      <li><span data-i18n="doc.next.s4">Wielkie litery jako drugie zadanie.</span></li>
+      <li><span data-i18n="doc.next.s5">API i wersja MVP.</span></li>
+    </ol>
+
+    <h2 data-i18n="doc.links.title">Kod, wagi, artykuł</h2>
+    <dl class="refs">
+      <dt><a href="https://github.com/tomekceszke/polish-punctuation-restorer/blob/main/paper/paper.md" target="_blank" rel="noopener" data-i18n="doc.links.paper">Artykuł</a></dt>
+      <dd data-i18n="doc.links.paperNote">Cel, metoda, wyniki i wnioski w formie akademickiej. Wersja robocza.</dd>
+
+      <dt><a href="https://github.com/tomekceszke/polish-punctuation-restorer" target="_blank" rel="noopener" data-i18n="doc.links.repo">Repozytorium na GitHubie</a></dt>
+      <dd data-i18n="doc.links.repoNote">Kod w Octave, notatki z każdego etapu, licencja MIT.</dd>
+
+      <dt><a href="https://huggingface.co/tomekceszke/polish-punctuation-restorer" target="_blank" rel="noopener" data-i18n="doc.links.model">Model na Hugging Face</a></dt>
+      <dd data-i18n="doc.links.modelNote">Wagi, karta modelu i eksport czytelny dla scipy.</dd>
+
+      <dt><a href="https://huggingface.co/datasets/tomekceszke/polish-punctuation-corpus" target="_blank" rel="noopener" data-i18n="doc.links.data">Korpus na Hugging Face</a></dt>
+      <dd data-i18n="doc.links.dataNote">Wszystkie pary (słowo, znak) z podziałem dokumentowym.</dd>
+    </dl>
+
+  </main>
+
+  <footer class="colophon">
+    <p data-i18n="doc.footer.ai">Całą matematykę i kod modelu napisałem ręcznie.</p>
+    <p data-i18n="doc.footer.meta">Tomasz Ceszke, 2026, licencja MIT.</p>
+  </footer>
+
+</div>
+
+<script src="i18n.js"></script>
+<script src="alt-i18n.js"></script>
+<script src="model.js"></script>
+<script src="script.js"></script>
+</body>
+</html>

@@ -17,7 +17,8 @@ function applyLang(lang) {
     const key = el.dataset.i18nHtml;
     if (dict[key] !== undefined) el.innerHTML = dict[key];
   });
-  document.getElementById("langToggle").textContent = lang === "pl" ? "EN" : "PL";
+  const other = lang === "pl" ? "EN" : "PL";
+  document.getElementById("langToggle").textContent = dict["ui.langToggle"] || other;
 }
 
 /* ===== Demo =====
@@ -339,7 +340,11 @@ btn.addEventListener("click", () => {
    wrapped nodes, and decimal separators ("1,2", "0,608"). Re-run after every
    applyLang(): i18n swaps reset textContent and destroy the wraps. */
 function accentPunctuation() {
-  document.querySelectorAll("main, footer").forEach((root) => {
+  // A page can narrow the motif to chosen blocks by marking them [data-punct];
+  // with none marked it falls back to main and footer, as on index.html.
+  const marked = document.querySelectorAll("[data-punct]");
+  const roots = marked.length ? marked : document.querySelectorAll("main, footer");
+  roots.forEach((root) => {
     const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
       acceptNode(node) {
         const parent = node.parentElement;
@@ -378,6 +383,8 @@ function accentPunctuation() {
 
 /* ===== Ambient hero background: thin-line MLP schematic ===== */
 function drawHeroNet() {
+  const host = document.getElementById("heroNet");
+  if (!host) return; // the document-style page has no ambient background
   const layers = [
     { x: 80, ys: [140, 260, 380, 500, 620] },
     { x: 420, ys: [80, 180, 280, 380, 480, 580, 680] },
@@ -408,7 +415,7 @@ function drawHeroNet() {
       svg.appendChild(c);
     }
   }
-  document.getElementById("heroNet").appendChild(svg);
+  host.appendChild(svg);
 }
 
 /* ===== Wiring ===== */

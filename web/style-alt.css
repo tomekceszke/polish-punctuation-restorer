@@ -1,0 +1,378 @@
+/* ===========================================================================
+   Document-style alternative to style.css.
+   One typeface (Literata), one reading column, no cards and no decoration.
+   The demo-state class contract is shared with style.css so script.js drives
+   both pages unchanged: .demo.is-live, .demo-box.is-empty, .caret, .mark(.on),
+   .demo-status.working/.loading/.error, .demo-btn.armed/.pressed, .demo-count.over
+   =========================================================================== */
+
+:root {
+  --paper: #ffffff;
+  --ink: #1b1b1b;
+  --meta: #6b6b6b;
+  --rule: #dcdcdc;
+  --accent: #1f3b8a;
+  --column: 38rem;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --paper: #161616;
+    --ink: #e8e8e8;
+    --meta: #9a9a9a;
+    --rule: #333333;
+    --accent: #8fa8ff;
+  }
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  padding: 0 1.5rem 5rem;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: Literata, Georgia, "Times New Roman", serif;
+  font-size: 1.0625rem;
+  font-weight: 400;
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+.sheet {
+  max-width: var(--column);
+  margin: 0 auto;
+}
+
+/* ===== Masthead ===== */
+.masthead {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 3.5rem 0 0;
+}
+
+.masthead h1 {
+  font-size: 1.35rem;
+  font-weight: 600;
+  line-height: 1.3;
+  letter-spacing: 0.01em;
+  margin: 0;
+}
+
+.lang-toggle {
+  flex: none;
+  font: inherit;
+  font-size: 0.95rem;
+  color: var(--meta);
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  text-decoration: underline;
+  text-decoration-color: var(--rule);
+  text-underline-offset: 4px;
+}
+.lang-toggle:hover { color: var(--ink); text-decoration-color: currentColor; }
+.lang-toggle:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+
+/* ===== Abstract: the one place the punctuation motif is inked ===== */
+.abstract {
+  font-size: 1.2rem;
+  line-height: 1.62;
+  margin: 1.75rem 0 0.75rem;
+}
+.punct { color: var(--accent); }
+
+.byline {
+  color: var(--meta);
+  font-size: 0.95rem;
+  margin: 0 0 2.75rem;
+}
+
+/* ===== Prose ===== */
+main h2 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  line-height: 1.4;
+  margin: 3.5rem 0 0.9rem;
+}
+
+main p { margin: 0 0 1.2rem; }
+
+a { color: inherit; }
+main p a, .credit a, .colophon a {
+  text-decoration: underline;
+  text-decoration-color: var(--accent);
+  text-underline-offset: 3px;
+}
+
+/* ===== Demo ===== */
+.demo { margin: 0 0 1.5rem; }
+
+.demo-box {
+  font-size: 1.125rem;
+  line-height: 1.85;
+  background: var(--paper);
+  border: 1px solid var(--rule);
+  border-left: 2px solid var(--accent);
+  padding: 1.4rem 1.5rem;
+  min-height: 8.5rem;
+  max-height: 22rem;
+  overflow-y: auto;
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
+  transition: border-color 0.15s;
+}
+.demo:not(.is-live) .demo-box { cursor: text; }
+.demo-box:focus-visible,
+.demo-box:focus { outline: 2px solid var(--accent); outline-offset: 2px; border-color: var(--accent); }
+
+.demo.is-live .demo-box.is-empty::before {
+  content: attr(data-placeholder);
+  color: var(--meta);
+}
+
+.demo-box .caret {
+  display: inline-block;
+  width: 1.5px;
+  height: 1.1em;
+  background: var(--accent);
+  vertical-align: text-bottom;
+  animation: blink 1s steps(1) infinite;
+}
+@keyframes blink { 50% { opacity: 0; } }
+
+.demo-box .mark {
+  display: inline-block;
+  color: var(--accent);
+  font-weight: 600;
+  width: 0;
+  opacity: 0;
+}
+.demo-box .mark.on {
+  width: auto;
+  opacity: 1;
+  transition: opacity 0.25s ease-out;
+}
+
+.demo-actions {
+  display: flex;
+  align-items: baseline;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.demo-btn {
+  font: inherit;
+  font-size: 0.95rem;
+  padding: 0.45rem 1.1rem;
+  border: 1px solid var(--ink);
+  border-radius: 2px;
+  background: none;
+  color: var(--ink);
+  cursor: default;
+  pointer-events: none;
+  opacity: 0.45;
+  transition: background 0.15s, color 0.15s, opacity 0.2s;
+}
+.demo-btn.armed { opacity: 1; }
+.demo-btn.pressed { background: var(--ink); color: var(--paper); }
+.demo.is-live .demo-btn { pointer-events: auto; cursor: pointer; opacity: 1; }
+.demo.is-live .demo-btn:hover { background: var(--ink); color: var(--paper); }
+.demo.is-live .demo-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+.demo-btn:disabled { opacity: 0.35; cursor: not-allowed; background: none; color: var(--ink); }
+
+.demo-status {
+  color: var(--meta);
+  font-size: 0.95rem;
+  font-style: italic;
+  min-height: 1.4em;
+}
+.demo-status.error { color: var(--accent); font-style: normal; }
+
+.demo-count {
+  margin-left: auto;
+  font-size: 0.85rem;
+  color: var(--meta);
+  font-variant-numeric: tabular-nums;
+}
+.demo-count.over { color: var(--accent); }
+
+.demo-note {
+  color: var(--meta);
+  font-size: 0.92rem;
+  line-height: 1.6;
+  margin: 0 0 1rem;
+}
+
+/* ===== The window figure ===== */
+.window {
+  margin: 1.9rem 0 2rem;
+  padding: 0;
+}
+
+.window-grid {
+  display: grid;
+  width: max-content;
+  grid-template-columns: repeat(7, max-content);
+  justify-content: start;
+  align-items: center;
+  column-gap: 0.5em;
+  font-size: 1.05rem;
+}
+
+.window-grid .w { grid-row: 1; color: var(--meta); justify-self: center; }
+.window-grid .w.focus {
+  color: var(--ink);
+  box-shadow: inset 0 -2px 0 var(--accent);
+}
+
+.window-tick {
+  grid-row: 2;
+  grid-column: 4;
+  justify-self: center;
+  width: 1px;
+  height: 1.2rem;
+  background: var(--rule);
+}
+
+/* Column 4 widens to fit the choices, which reads as a slot around the focus word. */
+.window-choices {
+  grid-row: 3;
+  grid-column: 4;
+  justify-self: center;
+  display: flex;
+  align-items: baseline;
+  gap: 1.15em;
+  white-space: nowrap;
+}
+
+.window-choices .choice { color: var(--meta); }
+.window-choices .choice.picked {
+  color: var(--accent);
+  font-weight: 600;
+  box-shadow: inset 0 -2px 0 var(--accent);
+}
+
+.window figcaption,
+.credit {
+  color: var(--meta);
+  font-size: 0.92rem;
+  line-height: 1.6;
+  margin-top: 1.4rem;
+}
+
+/* ===== Bibliography ===== */
+.set-label {
+  margin: 1.6rem 0 0.4rem;
+  color: var(--meta);
+  font-size: 0.92rem;
+}
+
+.bib {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  columns: 2;
+  column-gap: 2rem;
+  font-size: 0.98rem;
+  line-height: 1.55;
+}
+.bib li {
+  break-inside: avoid;
+  margin-bottom: 0.35rem;
+}
+.bib cite { font-style: italic; }
+
+.credit { margin-top: 1.6rem; }
+.after-credit { margin-top: 1.6rem; }
+
+/* ===== Tables ===== */
+.table-wrap { overflow-x: auto; margin: 0 0 1.4rem; }
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: 0.98rem;
+  font-variant-numeric: tabular-nums;
+}
+caption {
+  caption-side: top;
+  text-align: left;
+  color: var(--meta);
+  font-size: 0.92rem;
+  padding-bottom: 0.5rem;
+}
+th, td {
+  text-align: right;
+  padding: 0.42rem 0 0.42rem 1.2rem;
+  border-bottom: 1px solid var(--rule);
+  white-space: nowrap;
+}
+th:first-child, td:first-child { text-align: left; padding-left: 0; white-space: normal; }
+thead th {
+  font-weight: 400;
+  color: var(--meta);
+  border-bottom-color: var(--ink);
+}
+tbody tr:last-child td { border-bottom: none; }
+tr.total td { border-top: 1px solid var(--ink); font-weight: 600; }
+td.best { color: var(--accent); font-weight: 600; }
+
+/* ===== Roadmap: a real sequence, so it is numbered ===== */
+.stages {
+  margin: 0 0 1.2rem;
+  padding-left: 1.6rem;
+}
+.stages li { margin-bottom: 0.5rem; }
+.stages li.past { color: var(--meta); }
+.stages .state {
+  color: var(--meta);
+  font-style: italic;
+  font-size: 0.9rem;
+}
+.stages li.now .state { color: var(--accent); font-style: normal; }
+
+/* ===== Links ===== */
+.refs { margin: 0; }
+.refs dt { margin-top: 1.1rem; }
+.refs dt:first-child { margin-top: 0; }
+.refs dt a {
+  text-decoration: underline;
+  text-decoration-color: var(--accent);
+  text-underline-offset: 3px;
+}
+.refs dd {
+  margin: 0.1rem 0 0;
+  color: var(--meta);
+  font-size: 0.95rem;
+}
+
+/* ===== Colophon ===== */
+.colophon {
+  margin-top: 4rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--rule);
+  color: var(--meta);
+  font-size: 0.92rem;
+  line-height: 1.65;
+}
+.colophon p { margin: 0 0 0.6rem; }
+.colophon p:last-child { margin: 0; }
+
+/* ===== Narrow screens ===== */
+@media (max-width: 34rem) {
+  body { padding: 0 1.15rem 3.5rem; font-size: 1rem; }
+  .masthead { padding-top: 2.25rem; }
+  .abstract { font-size: 1.1rem; }
+  .bib { columns: 1; }
+  .window-grid { grid-template-columns: repeat(7, max-content); font-size: 0.95rem; column-gap: 0.4em; overflow-x: auto; }
+  .window { overflow-x: auto; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { animation: none !important; transition: none !important; }
+}
