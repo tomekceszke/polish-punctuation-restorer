@@ -96,14 +96,6 @@ code {
   font-size: 0.95rem;
   font-weight: 500;
 }
-.masthead nav { display: flex; gap: 1.6rem; align-items: baseline; }
-.masthead nav a {
-  text-decoration: underline;
-  text-decoration-color: var(--band-line);
-  text-underline-offset: 4px;
-}
-.masthead nav a:hover { text-decoration-color: currentColor; }
-.masthead nav a:focus-visible { outline: 2px solid var(--band-accent); outline-offset: 3px; }
 .brand {
   font-size: 1.35rem;
   font-weight: 700;
@@ -291,6 +283,15 @@ code {
   font-weight: 600;
   margin: 0 0 0.4rem;
 }
+.band .repo { margin-top: 1.6rem; }
+.band .repo h3 { font-size: 1.05rem; }
+.band .repo a {
+  text-decoration: underline;
+  text-decoration-color: var(--band-accent);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 4px;
+}
+.band .repo a:hover { color: var(--band-accent); }
 .band aside p {
   margin: 0;
   color: inherit; /* the article's aside rule would otherwise paint it ink-on-ultramarine */

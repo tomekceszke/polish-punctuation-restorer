@@ -14,6 +14,11 @@ Object.assign(STRINGS.pl, {
     "więcej niż baza bigramowa.",
   "mag.byline": "Tomasz Ceszke, 2026",
 
+  "mag.repo.title": "Kod na GitHubie",
+  "mag.repo.text":
+    "Cały potok w Octave: preprocessing, baza bigramowa, MLP z ręcznym backpropem, trening, ewaluacja " +
+    "i detect.m. Notatki z każdego etapu, eksport wag do przeglądarki, licencja MIT.",
+
   "mag.browser.title": "W przeglądarce",
   "mag.browser.text":
     "Bez serwera. Wagi to 1 181 460 bajtów float32 pobierane raz; model.js zakłada na bufor " +
@@ -191,6 +196,11 @@ Object.assign(STRINGS.en, {
     "A multilayer perceptron with backprop derived by hand: 295,365 parameters, zero ML libraries, " +
     "plain GNU Octave. Stage 1 of 5. Test-set Macro-F1 0.608, 9.7 pp above the bigram baseline.",
   "mag.byline": "Tomasz Ceszke, 2026",
+
+  "mag.repo.title": "Code on GitHub",
+  "mag.repo.text":
+    "The whole Octave pipeline: preprocessing, bigram baseline, MLP with hand-written backprop, training, " +
+    "evaluation and detect.m. Notes from every stage, the browser weight export, MIT licence.",
 
   "mag.browser.title": "In the browser",
   "mag.browser.text":
