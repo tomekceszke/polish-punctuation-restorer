@@ -18,7 +18,10 @@
   <div class="wrap">
     <div class="masthead">
       <a class="brand" href="#"><span class="brand-mark" aria-hidden="true">,</span>Polish Punctuation Restorer</a>
-      <button class="lang-toggle" id="langToggle" aria-label="Switch language">English</button>
+      <nav>
+        <a href="https://github.com/tomekceszke/polish-punctuation-restorer" target="_blank" rel="noopener">GitHub</a>
+        <button class="lang-toggle" id="langToggle" aria-label="Switch language">English</button>
+      </nav>
     </div>
 
     <h1 class="headline" data-punct data-i18n-html="mag.h1">Sieć, która stawia przecinki.<br>Napisana od zera w Octave.</h1>
@@ -29,7 +32,6 @@
       <div class="demo-box" id="demoBox" lang="pl" aria-live="polite"></div>
       <div class="demo-actions">
         <button class="demo-btn" id="demoBtn" tabindex="-1" data-i18n="demo.button">Uzupełnij znaki</button>
-        <a class="repo-link" href="https://github.com/tomekceszke/polish-punctuation-restorer" target="_blank" rel="noopener" data-i18n="mag.repoBtn">Kod na GitHubie</a>
         <span class="demo-status" id="demoStatus"></span>
         <span class="demo-count" id="demoCount"></span>
       </div>
@@ -344,10 +346,6 @@
       <h2 data-punct data-i18n="mag.links.title">Kod, wagi, korpus, artykuł</h2>
       <dl class="refs wide">
         <div>
-          <dt><a href="https://github.com/tomekceszke/polish-punctuation-restorer/blob/main/paper/paper.md" target="_blank" rel="noopener" data-i18n="mag.links.paper">Artykuł</a></dt>
-          <dd data-i18n="mag.links.paperNote">Cel, metoda, wyniki, wnioski.</dd>
-        </div>
-        <div>
           <dt><a href="https://github.com/tomekceszke/polish-punctuation-restorer" target="_blank" rel="noopener" data-i18n="mag.links.repo">Repozytorium</a></dt>
           <dd data-i18n="mag.links.repoNote">Cały potok w Octave.</dd>
         </div>
@@ -358,6 +356,10 @@
         <div>
           <dt><a href="https://huggingface.co/datasets/tomekceszke/polish-punctuation-corpus" target="_blank" rel="noopener" data-i18n="mag.links.data">Korpus na Hugging Face</a></dt>
           <dd data-i18n="mag.links.dataNote">1,2 mln par w parquet.</dd>
+        </div>
+        <div>
+          <dt><a href="https://github.com/tomekceszke/polish-punctuation-restorer/blob/main/paper/paper.md" target="_blank" rel="noopener" data-i18n="mag.links.paper">Artykuł</a></dt>
+          <dd data-i18n="mag.links.paperNote">Cel, metoda, wyniki, wnioski.</dd>
         </div>
       </dl>
     </section>

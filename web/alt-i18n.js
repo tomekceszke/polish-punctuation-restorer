@@ -167,7 +167,6 @@ Object.assign(STRINGS.pl, {
     "Matematyka i kod modelu: ręcznie. AI pracowało jako mentor, pytaniami i wskazówkami, bez " +
     "gotowego kodu. Ta strona natomiast powstała z pomocą AI.",
   "mag.footer.meta": '<a href="https://tomek.ceszke.com/">Tomasz Ceszke</a>, 2026, licencja MIT.',
-  "mag.repoBtn": "Kod na GitHubie",
 
   "mag.n.train": "828 125",
   "mag.n.val": "239 580",
@@ -345,7 +344,6 @@ Object.assign(STRINGS.en, {
     "Mathematics and model code: by hand. AI worked as a mentor, through questions and hints, with no " +
     "ready-made code. This page, on the other hand, was built with AI help.",
   "mag.footer.meta": '<a href="https://tomek.ceszke.com/">Tomasz Ceszke</a>, 2026, MIT licence.',
-  "mag.repoBtn": "Code on GitHub",
 
   "mag.n.train": "828,125",
   "mag.n.val": "239,580",

@@ -96,6 +96,14 @@ code {
   font-size: 0.95rem;
   font-weight: 500;
 }
+.masthead nav { display: flex; gap: 1.6rem; align-items: baseline; }
+.masthead nav a {
+  text-decoration: underline;
+  text-decoration-color: var(--band-line);
+  text-underline-offset: 4px;
+}
+.masthead nav a:hover { text-decoration-color: currentColor; }
+.masthead nav a:focus-visible { outline: 2px solid var(--band-accent); outline-offset: 3px; }
 .brand {
   font-size: 1.35rem;
   font-weight: 700;
@@ -263,22 +271,6 @@ code {
 }
 .demo-count.over { color: var(--band-accent); opacity: 1; }
 
-/* The repository matters as much as the demo, so it sits right under it */
-.repo-link {
-  display: inline-block;
-  font-family: var(--display);
-  font-weight: 600;
-  font-size: 1rem;
-  line-height: normal;
-  padding: 0.62rem 1.2rem;
-  border: 1.5px solid var(--band-ink);
-  border-radius: 3px;
-  text-decoration: none;
-  transition: background 0.15s, color 0.15s;
-}
-.repo-link:hover { background: var(--band-ink); color: var(--band); }
-.repo-link:focus-visible { outline: 2px solid var(--band-accent); outline-offset: 3px; }
-
 .demo-foot {
   display: grid;
   grid-template-columns: minmax(0, var(--col-text)) minmax(16rem, 1fr);
@@ -388,7 +380,7 @@ th, td {
   vertical-align: top;
 }
 th:first-child, td:first-child { text-align: left; padding-left: 0; }
-td.txt { text-align: left; white-space: normal; }
+th.txt, td.txt { text-align: left; white-space: normal; }
 thead th {
   font-family: var(--display);
   font-weight: 500;
