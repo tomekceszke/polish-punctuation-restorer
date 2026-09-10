@@ -46,7 +46,8 @@ index, `<UNK>` = `length(vocab) + 1`.
 cd src
 octave-cli check.m          # 1. confirm the metric of the committed weights
 octave-cli utils/export_web.m   # 1a. refresh web/model/ too — the website runs the same weights
-                                #     in the browser (see notes/web-demo.md); commit web/model/
+                                #     in the browser (see notes/web-demo.md); commit web/model/.
+                                #     Skipping this fails CI, it does not fail silently.
 ./utils/build_hf.sh         # 2. regenerate hf/ from data/processed/ and src/
                             # 3. add a row to the Progress log table in hf/README.md
                             #    (stage, date, model, test Macro-F1, delta) and refresh the

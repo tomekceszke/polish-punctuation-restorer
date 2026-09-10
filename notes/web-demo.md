@@ -56,6 +56,10 @@ never served from a stale cache.
 
 **After every retraining:** `octave-cli utils/export_web.m`, then commit `web/model/`.
 
+Forgetting that step would leave the website serving the previous model, so CI does not let it
+happen: the export is byte-reproducible (no timestamp in `meta.json`), and the *Website weights are
+in sync with model.mat* job re-runs it and fails on any diff against what is committed.
+
 ## Parity with `detect.m`
 
 `meta.json` carries a `selfTest` block: one sentence pushed through the real Octave pipeline at export

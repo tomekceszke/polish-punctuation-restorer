@@ -125,3 +125,17 @@ jobs:
         run: |
           octave --norc --no-gui test_post_process.m
           echo "post_process: OK"
+
+      # The website ships its own copy of the weights (web/model/, read by web/model.js).
+      # Re-export them here and fail if the result differs from what is committed — that is the
+      # only thing standing between a retrained model.mat and a website still serving the old one.
+      - name: Website weights are in sync with model.mat
+        working-directory: src
+        run: |
+          octave --norc --no-gui utils/export_web.m
+          cd ..
+          if ! git diff --exit-code --stat -- web/model; then
+            echo "::error::web/model/ is stale — run 'octave-cli utils/export_web.m' from src/ and commit web/model/"
+            exit 1
+          fi
+          echo "web/model: in sync"

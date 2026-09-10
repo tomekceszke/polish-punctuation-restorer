@@ -164,7 +164,7 @@ octave-cli check.m
 # Restore punctuation in your own text (interactive; empty line or "exit" quits)
 octave-cli detect.m
 
-# Re-export the weights for the website after every retraining
+# Re-export the weights for the website after every retraining (CI fails if you forget)
 octave-cli utils/export_web.m
 ```
 

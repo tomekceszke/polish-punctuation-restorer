@@ -119,8 +119,9 @@ fid = fopen(json_path, 'w');
 if fid < 0
     error('cannot write %s', json_path);
 end
+%   deliberately no timestamp: the export has to be byte-reproducible, so CI can re-run it and
+%   fail the build when web/model/ is out of step with data/processed/model.mat
 fprintf(fid, '{\n');
-fprintf(fid, '  "exported": "%s",\n', datestr(now(), 'yyyy-mm-dd'));
 fprintf(fid, '  "V": %d,\n', V);
 fprintf(fid, '  "d": %d,\n', C_D);
 fprintf(fid, '  "h": %d,\n', C_H);
