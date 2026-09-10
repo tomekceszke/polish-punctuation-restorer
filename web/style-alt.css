@@ -96,6 +96,20 @@ code {
   font-size: 0.95rem;
   font-weight: 500;
 }
+.brand {
+  font-size: 1.35rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  text-decoration: none;
+}
+.brand-mark {
+  color: var(--band-accent);
+  font-family: var(--text);
+  font-size: 1.6em;
+  line-height: 0;
+  margin-right: 0.15em;
+  vertical-align: -0.12em;
+}
 
 .lang-toggle {
   font: inherit;
@@ -118,8 +132,8 @@ code {
   font-size: clamp(2.7rem, 6.4vw, 6rem);
   line-height: 0.96;
   letter-spacing: -0.02em;
-  margin: 3.5rem 0 1.6rem;
-  max-width: 22ch;
+  margin: 3rem 0 1.6rem;
+  max-width: 30ch;
 }
 
 .deck {
@@ -192,8 +206,9 @@ code {
 
 .demo-actions {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  gap: 1.1rem;
+  gap: 0.8rem 1.1rem;
   margin-top: 1rem;
 }
 
@@ -247,6 +262,22 @@ code {
   opacity: 0.8;
 }
 .demo-count.over { color: var(--band-accent); opacity: 1; }
+
+/* The repository matters as much as the demo, so it sits right under it */
+.repo-link {
+  display: inline-block;
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: 1rem;
+  line-height: normal;
+  padding: 0.62rem 1.2rem;
+  border: 1.5px solid var(--band-ink);
+  border-radius: 3px;
+  text-decoration: none;
+  transition: background 0.15s, color 0.15s;
+}
+.repo-link:hover { background: var(--band-ink); color: var(--band); }
+.repo-link:focus-visible { outline: 2px solid var(--band-accent); outline-offset: 3px; }
 
 .demo-foot {
   display: grid;
@@ -311,11 +342,13 @@ code {
 }
 
 /* Side column: the tables the text refers to */
+.sec > aside { align-self: start; }
 aside h3 {
   font-family: var(--display);
   font-size: 0.95rem;
   font-weight: 600;
-  margin: 0.2rem 0 0.6rem;
+  line-height: 1.6;
+  margin: 0.15rem 0 0.7rem;
 }
 aside p {
   margin: 0.7rem 0 0;
@@ -514,6 +547,11 @@ figcaption, .credit {
   line-height: 1.55;
 }
 .colophon p { margin: 0; opacity: 0.85; }
+.colophon a {
+  text-decoration: underline;
+  text-decoration-color: var(--band-accent);
+  text-underline-offset: 3px;
+}
 .colophon .meta { font-family: var(--display); font-size: 0.95rem; }
 
 /* ===== Narrow screens ===== */

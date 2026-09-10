@@ -166,7 +166,8 @@ Object.assign(STRINGS.pl, {
   "mag.footer.ai":
     "Matematyka i kod modelu: ręcznie. AI pracowało jako mentor, pytaniami i wskazówkami, bez " +
     "gotowego kodu. Ta strona natomiast powstała z pomocą AI.",
-  "mag.footer.meta": "Tomasz Ceszke, 2026, licencja MIT.",
+  "mag.footer.meta": '<a href="https://tomek.ceszke.com/">Tomasz Ceszke</a>, 2026, licencja MIT.',
+  "mag.repoBtn": "Kod na GitHubie",
 
   "mag.n.train": "828 125",
   "mag.n.val": "239 580",
@@ -186,7 +187,7 @@ Object.assign(STRINGS.pl, {
 Object.assign(STRINGS.en, {
   "ui.langToggle": "Polski",
 
-  "mag.h1": "A network that places commas.<br>Written from scratch in Octave.",
+  "mag.h1": "A network that places commas.<br>Built from scratch in Octave.",
   "mag.deck":
     "A multilayer perceptron with backprop derived by hand: 295,365 parameters, zero ML libraries, " +
     "plain GNU Octave. Stage 1 of 5. Test-set Macro-F1 0.608, 9.7 pp above the bigram baseline.",
@@ -343,7 +344,8 @@ Object.assign(STRINGS.en, {
   "mag.footer.ai":
     "Mathematics and model code: by hand. AI worked as a mentor, through questions and hints, with no " +
     "ready-made code. This page, on the other hand, was built with AI help.",
-  "mag.footer.meta": "Tomasz Ceszke, 2026, MIT licence.",
+  "mag.footer.meta": '<a href="https://tomek.ceszke.com/">Tomasz Ceszke</a>, 2026, MIT licence.',
+  "mag.repoBtn": "Code on GitHub",
 
   "mag.n.train": "828,125",
   "mag.n.val": "239,580",
